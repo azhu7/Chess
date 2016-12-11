@@ -7,21 +7,15 @@ class Knight : public Piece {
 private:
 
 public:
-	Knight(const Player color_in, const unsigned col_in, const unsigned row_in)
+	Knight(const Player color_in, const int col_in, const int row_in)
 		: Piece{ color_in, col_in, row_in } {}
 	~Knight() {}
 
-	char get_type() const;
+	// Inherited from Piece base class
+	char get_type() const { return 'N'; }
 
-	bool valid_placement(const unsigned new_col, const unsigned new_row) const;
+	// Inherited from Piece base class
+	bool valid_placement(const int new_col, const int new_row) const;
 };
-
-inline char Knight::get_type() const {
-	return 'N';
-}
-
-bool Knight::valid_placement(const unsigned new_col, const unsigned new_row) const {
-	return true;
-}
 
 #endif // KNIGHT_H

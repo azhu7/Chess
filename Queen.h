@@ -7,21 +7,15 @@ class Queen : public Piece {
 private:
 
 public:
-	Queen(const Player color_in, const unsigned col_in, const unsigned row_in)
+	Queen(const Player color_in, const int col_in, const int row_in)
 		: Piece{ color_in, col_in, row_in } {}
 	~Queen() {}
 
-	char get_type() const;
+	// Inherited from Piece base class
+	char get_type() const { return 'Q'; }
 
-	bool valid_placement(const unsigned new_col, const unsigned new_row) const;
+	// Inherited from Piece base class
+	bool valid_placement(const int new_col, const int new_row) const;
 };
-
-inline char Queen::get_type() const {
-	return 'Q';
-}
-
-bool Queen::valid_placement(const unsigned new_col, const unsigned new_row) const {
-	return true;
-}
 
 #endif // QUEEN_H
