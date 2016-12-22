@@ -7,24 +7,9 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include "Player.h"
 #include <iostream>
 #include <cassert>
-
-const static enum Player {
-	WHITE = 1,
-	BLACK = 2
-};
-
-// Print Player enum as integer value
-static std::ostream &operator<<(std::ostream &os, const Player p) {
-	os << (p == WHITE ? '1' : '2');
-	return os;
-}
-
-// Return Player enum as string value
-static std::string player_to_string(const Player p) {
-	return p == WHITE ? std::string{ "Player 1" } : std::string{ "Player 2" };
-}
 
 class Piece {
 private:
@@ -69,4 +54,4 @@ public:
 		const int new_row) const = 0;
 };
 
-#endif  //BINARY_H
+#endif  //PIECE_H

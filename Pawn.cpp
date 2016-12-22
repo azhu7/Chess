@@ -7,7 +7,7 @@ bool Pawn::valid_capture(const int new_col, const int new_row) const {
 
 	// Valid if move left/right 1 column and move up/down 1 row
 	// White pawn must capture up one col. Black pawn capture down one col
-	return col_abs_diff == 1 && (get_player() == WHITE ? row_diff == 1 : row_diff == -1);
+	return col_abs_diff == 1 && (get_player() == Player::WHITE ? row_diff == 1 : row_diff == -1);
 }
 
 bool Pawn::valid_placement(const int new_col, const int new_row) const {
@@ -23,7 +23,7 @@ bool Pawn::valid_placement(const int new_col, const int new_row) const {
 	}
 
 	// Case 1: white pawn
-	if (get_player() == WHITE) {
+	if (get_player() == Player::WHITE) {
 		// First move can go 1 or 2 tiles up
 		if (get_row() == kWhitePawnStart) {
 			return (row_diff == 1) || (row_diff == 2);

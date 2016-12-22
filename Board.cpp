@@ -1,4 +1,18 @@
 #include "Board.h"
+#include "Player.h"
+#include "Pawn.h"
+#include "Bishop.h"
+#include "Knight.h"
+#include "Rook.h"
+#include "Queen.h"
+#include "King.h"
+#include <iostream>
+#include <cassert>
+#include <algorithm>
+#include <string>
+
+const int kNumRows = 8;
+const int kNumCols = 8;
 
 void print_col_labels(std::ostream &os);
 std::ostream &operator<<(std::ostream &os, const Board &board);
@@ -31,7 +45,7 @@ inline void Board::place_pawns() {
 }
 
 inline void Board::place_pieces() {
-	const char kPieceKey[kNumCols]{ 'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R' };
+	const char kPieceKey[]{ 'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R' };  // Piece placements
 	const int white_row = 0, black_row = 7;
 	for (int col = 0; col < kNumCols; ++col) {
 		board_[white_row][col] = piece_factory(Player::WHITE, col, white_row, kPieceKey[col]);
@@ -40,7 +54,7 @@ inline void Board::place_pieces() {
 }
 
 inline void Board::switch_turns() {
-	turn_ = turn_ == WHITE ? BLACK : WHITE;
+	turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
 }
 
 inline void Board::swap(Piece *&p1, Piece *&p2) {
@@ -54,43 +68,9 @@ inline bool Board::tile_in_bounds(const int col_in, const int row_in) const {
 		(row_in >= 0) && (row_in < kNumRows);
 }
 
-////////// BEGIN PUBLIC FUNCTIONS //////////
-
-Board::Board()
-	: turn_{ Player::WHITE } {
-	board_ = new Piece**[kNumRows];
-	for (int i = 0; i < kNumCols; ++i) {
-		board_[i] = new Piece*[kNumCols] {nullptr};
-	}
-	place_pawns();
-	place_pieces();
-}
-
-Board::~Board() {
-	for (int row = 0; row < kNumRows; ++row) {
-		// Delete all pieces in column
-		for (int col = 0; col < kNumCols; ++col) {
-			delete board_[row][col];
-			board_[row][col] = nullptr;
-		}
-		// Delete column
-		delete board_[row];
-		board_[row] = nullptr;
-	}
-	// Delete rows
-	delete board_;
-	board_ = nullptr;
-}
-
-inline Piece *&Board::get_tile(const int col, const int row) const {
-	// Check in-bounds requirement
-	assert(col >= 0 && col < kNumCols);
-	assert(row >= 0 && row < kNumRows);
-	return board_[row][col];
-}
-
-std::string Board::get_turn() const {
-	return player_to_string(turn_);
+bool Board::path_is_clear(const int old_col, const int old_row,
+	const int new_col, const int new_row) const {
+	return false;
 }
 
 bool Board::valid_move(const int old_col, const int old_row,
@@ -120,7 +100,7 @@ bool Board::valid_move(const int old_col, const int old_row,
 		else {
 			// Otherwise, check if pawn is capturing an enemy piece
 			Pawn *temp_pawn = static_cast<Pawn *>(cur_piece);
-			placement = temp_pawn->valid_capture(new_col, new_row) && 
+			placement = temp_pawn->valid_capture(new_col, new_row) &&
 				target_tile && target_tile->get_player() != turn_;
 		}
 	}
@@ -128,6 +108,48 @@ bool Board::valid_move(const int old_col, const int old_row,
 	bool same_team = new_tile ? new_tile->get_player() == cur_piece->get_player() : false;
 
 	return correct_team && placement && !same_team;
+}
+
+
+////////// BEGIN PUBLIC FUNCTIONS //////////
+
+Board::Board()
+	: turn_{ Player::WHITE } {
+	// Create 8x8 array of nullptrs
+	board_ = new Piece**[kNumRows];
+	for (int i = 0; i < kNumCols; ++i) {
+		board_[i] = new Piece*[kNumCols] {nullptr};
+	}
+	// Place all pieces onto board
+	place_pawns();
+	place_pieces();
+}
+
+Board::~Board() {
+	for (int row = 0; row < kNumRows; ++row) {
+		// Delete all pieces in column
+		for (int col = 0; col < kNumCols; ++col) {
+			delete board_[row][col];
+			board_[row][col] = nullptr;
+		}
+		// Delete column
+		delete board_[row];
+		board_[row] = nullptr;
+	}
+	// Delete rows
+	delete board_;
+	board_ = nullptr;
+}
+
+inline Piece *&Board::get_tile(const int col, const int row) const {
+	// Check in-bounds requirement
+	assert(col >= 0 && col < kNumCols);
+	assert(row >= 0 && row < kNumRows);
+	return board_[row][col];
+}
+
+std::string Board::get_current_player() const {
+	return player_to_string(turn_);
 }
 
 bool Board::move(const int old_col, const int old_row,
