@@ -45,8 +45,7 @@ void print_instructions();
 void print_intro();
 void print_prompt(const Board &board);
 void print_quit();
-void parse_move(const string &input, int &old_col, int &old_row,
-	int &new_col, int &new_row);
+void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
 int parse_col_label(const char col_label);
 
 int main(int argc, char *argv[]) {
@@ -55,7 +54,7 @@ int main(int argc, char *argv[]) {
 
 	while (true) {
 		cout << board;
-		int old_col, old_row, new_col, new_row;
+		Tile old_pos, new_pos;
 		bool valid_move = false;
 		while (!valid_move) {
 			print_prompt(board);  // Request input from user
@@ -73,8 +72,8 @@ int main(int argc, char *argv[]) {
 				default: {  // TODO: Check lexicographic character instead of default for options
 					// Parse and execute move
 					try {
-						parse_move(input, old_col, old_row, new_col, new_row);
-						valid_move = board.move(old_col, old_row, new_col, new_row);
+						parse_move(input, old_pos, new_pos);
+						valid_move = board.move(old_pos, new_pos);
 					}
 					catch (InvalidInputException e) {
 						cerr << e.what();
@@ -108,7 +107,7 @@ void print_intro() {
 }
 
 void print_prompt(const Board &board) {
-	cout << board.get_current_player() << "\'s turn.";
+	cout << "Player " << board.get_current_player() << "\'s turn. ";
 	cout << "Enter your move (\"a1 c3\"): ";
 }
 
@@ -118,21 +117,18 @@ void print_quit() {
 }
 
 // REQUIRES input is of format: A1 B2
-void parse_move(const string &input, int &old_col, int &old_row,
-	int &new_col, int &new_row) {
-	old_row = input[1] - '0';
-	new_row = input[4] - '0';
+void parse_move(const string &input, Tile &old_pos, Tile &new_pos) {
+	// Read in rows and correct to zero-indexed
+	old_pos.row = input[1] - '0' - 1;
+	new_pos.row = input[4] - '0' - 1;
 	char old_col_label = input[0], new_col_label = input[3];
 	try {
-		old_col = parse_col_label(old_col_label);
-		new_col = parse_col_label(new_col_label);
+		old_pos.col = parse_col_label(old_col_label);
+		new_pos.col = parse_col_label(new_col_label);
 	}
 	catch (InvalidInputException e) {
 		throw e;
 	}
-	// Correct index
-	--old_row;
-	--new_row;
 }
 
 // EFFECTS  Return respective column number
