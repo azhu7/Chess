@@ -2,7 +2,7 @@
 *  Author: Alexander Zhu
 *  Date Created: November 20, 2016
 *  Description: Driver class for Chess game
-*  Version: 1.2
+*  Version: 1.3
 *
 *  TODO:
 *    Fix instruction input (next getline gets messed up)
@@ -11,9 +11,11 @@
 *	 Verbose output detailing moves
 *	 Save feature? Write moves to log for future replay
 *	 How to check for correct test output state?
+*	 Remove Board object from main altogether? (only keep MoveMaker?)
 */
 
-#include "Board.h"
+#include "board.h"
+#include "move_maker.h"
 #include <iostream>
 #include <unordered_map>
 #include <exception>
@@ -30,26 +32,16 @@ public:
 	}
 };
 
-const unordered_map<char, int> col_labels {
-	{ 'a', 0 },
-	{ 'b', 1 },
-	{ 'c', 2 },
-	{ 'd', 3 },
-	{ 'e', 4 },
-	{ 'f', 5 },
-	{ 'g', 6 },
-	{ 'h', 7 }
-};
-
 void print_instructions();
 void print_intro();
-void print_prompt(const Board &board);
+void print_prompt(const MoveMaker &move_maker);
 void print_quit();
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
 int parse_col_label(const char col_label);
 
 int main(int argc, char *argv[]) {
 	Board board;
+	MoveMaker move_maker{ board };
 	print_intro();
 
 	while (true) {
@@ -57,7 +49,7 @@ int main(int argc, char *argv[]) {
 		Tile old_pos, new_pos;
 		bool valid_move = false;
 		while (!valid_move) {
-			print_prompt(board);  // Request input from user
+			print_prompt(move_maker);  // Request input from user
 			string input;
 			if (getline(cin, input)) {
 				if (!input.length()) {
@@ -73,7 +65,7 @@ int main(int argc, char *argv[]) {
 					// Parse and execute move
 					try {
 						parse_move(input, old_pos, new_pos);
-						valid_move = board.move(old_pos, new_pos);
+						valid_move = move_maker.make_move(old_pos, new_pos);
 					}
 					catch (InvalidInputException e) {
 						cerr << e.what();
@@ -93,11 +85,14 @@ int main(int argc, char *argv[]) {
 }
 
 void print_instructions() {
-	cout << "Not implemented yet\n";
+	cout << "\nRules are standard chess rules.\n";
+	cout << "Usage:\n";
+	cout << "\tMove: a1 c3\n";
+	cout << "\tQuit: quit\n";
 }
 
 void print_intro() {
-	char option = 'n';  // TEMP PLACEHOLDER
+	char option = 'y';  // TEMP PLACEHOLDER
 	cout << "Hello! Welcome to chess.\n";
 	cout << "Would you like to see the instructions? (y/n): ";
 	if (option == 'y') {
@@ -106,8 +101,8 @@ void print_intro() {
 	cout << "Let's get started!\n\n";
 }
 
-void print_prompt(const Board &board) {
-	cout << "Player " << board.get_current_player() << "\'s turn. ";
+void print_prompt(const MoveMaker &move_maker) {
+	cout << "Player " << move_maker.get_current_player() << "\'s turn. ";
 	cout << "Enter your move (\"a1 c3\"): ";
 }
 
@@ -134,6 +129,16 @@ void parse_move(const string &input, Tile &old_pos, Tile &new_pos) {
 // EFFECTS  Return respective column number
 //          Throws exception if col_label is a valid label
 int parse_col_label(const char col_label) {
+	static const unordered_map<char, int> col_labels{
+		{ 'a', 0 },
+		{ 'b', 1 },
+		{ 'c', 2 },
+		{ 'd', 3 },
+		{ 'e', 4 },
+		{ 'f', 5 },
+		{ 'g', 6 },
+		{ 'h', 7 }
+	};
 	if (col_labels.find(col_label) == col_labels.end()) {
 		throw InvalidInputException();
 	}

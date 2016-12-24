@@ -4,18 +4,19 @@
 #include "piece.h"
 
 class King : public Piece {
-private:
-
 public:
-	King(const Player color_in, const Tile &pos)
-		: Piece{ color_in, pos } {}
+	explicit King(const Player color = Player::WHITE, const Tile &pos = Tile())
+		: Piece{ color, pos }, moved_{ false } {}
 	~King() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'K'; }
+	const char get_type() const { return 'K'; }
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &pos) const;
+	bool valid_placement(const Tile &new_pos) const;
+
+private:
+	bool moved_;  // Can only castle if !moved
 };
 
 #endif // KING_H

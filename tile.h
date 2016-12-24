@@ -2,12 +2,10 @@
 #define TILE_H
 
 struct Tile {
-	Tile(const int row_in, const int col_in)
-		: row{ row_in }, col{ col_in } {}
-	Tile()
-		: row{ -1 }, col{ -1 } {}
+	explicit Tile(const int row = -1, const int col = -1)
+		: row{ row }, col{ col } {}
 	int row;
 	int col;
 };
 
-#endif // !TILE_H
+#endif // TILE_H

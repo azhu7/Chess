@@ -4,22 +4,23 @@
 #include "piece.h"
 
 class Knight : public Piece {
-private:
-
 public:
-	Knight(const Player color_in, const Tile &pos)
-		: Piece{ color_in, pos } {}
+	explicit Knight(const Player color = Player::WHITE, const Tile &pos = Tile())
+		: Piece{ color, pos } {}
 	~Knight() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'N'; }
+	const char get_type() const { return 'N'; }
 
 	// EFFECTS  Return true if l-shaped path from old pos to new pos
 	//			Used by Knight
 	bool l_shape_move(const Tile &old_pos, const Tile &new_pos);
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &pos) const;
+	bool valid_placement(const Tile &new_pos) const;
+
+private:
+
 };
 
 #endif // KNIGHT_H

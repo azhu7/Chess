@@ -1,21 +1,25 @@
 #ifndef ROOK_H
 #define ROOK_H
 
-#include "piece.h"
+#include "linear_piece.h"
 
-class Rook : public Piece {
-private:
-
+class Rook : public LinearPiece {
 public:
-	Rook(const Player color_in, const Tile &pos)
-		: Piece{ color_in, pos } {}
+	explicit Rook(const Player color = Player::WHITE, const Tile &pos = Tile())
+		: LinearPiece{ color, pos } {}
 	~Rook() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'R'; }
+	const char get_type() const { return 'R'; }
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &pos) const;
+	bool valid_placement(const Tile &new_pos) const {
+		const Tile cur_pos = get_pos();
+		return horizontal_path(cur_pos, new_pos) || vertical_path(cur_pos, new_pos);
+	}
+
+private:
+
 };
 
 #endif // ROOK_H

@@ -13,50 +13,41 @@
 #include <cassert>
 
 class Piece {
-private:
-	Player color_;
-	int row_;
-	int col_;
-
 public:
-	Piece() {}
-	Piece(const Player color_in, const Tile &pos)
-		: color_{ color_in }, col_{ pos.col }, row_{ pos.row } {}
-	Piece(const Piece &other);
+	explicit Piece(const Player color = Player::WHITE, const Tile &pos = Tile())
+		: color_{ color }, col_{ pos.col }, row_{ pos.row } {}
+	Piece(const Piece &other);  // TODO  Remove copy ctor and assignment operator b/c don't need?
 	Piece &operator=(const Piece &other);
 
 	~Piece() {}
 
-	Player get_player() const {
-		return color_;
-	}
+	const Player &get_player() const { return color_; }
 
-	int get_row() const {
-		return row_;
-	}
+	const int get_row() const { return row_; }
 
-	int get_col() const {
-		return col_;
-	}
+	const int get_col() const { return col_; }
 
-	Tile get_pos() const {
-		return Tile{ row_, col_ };
-	}
+	const Tile get_pos() const { return Tile{ row_, col_ }; }
 
-	void set_coords(const Tile &pos) {
-		col_ = pos.col;
+	void set_pos(const Tile &pos) {
 		row_ = pos.row;
+		col_ = pos.col;
 	}
 
 	// EFFECTS  Return piece type as char ('P' = Pawn, 'R' = Rook, etc.)
-	virtual char get_type() const = 0;
+	virtual const char get_type() const = 0;
 
 	friend std::ostream &operator<<(std::ostream &os, const Piece *p);
 
 	// REQUIRES pos is a valid coordinate
 	// EFFECTS  Determine if piece is physically allowed to move to new position.
 	//          Does not take into account other pieces at that position.
-	virtual bool valid_placement(const Tile &pos) const = 0;
+	virtual bool valid_placement(const Tile &new_pos) const = 0;
+
+private:
+	Player color_;
+	int row_;
+	int col_;
 };
 
 #endif  //PIECE_H

@@ -1,21 +1,24 @@
 #ifndef BISHOP_H
 #define BISHOP_H
 
-#include "piece.h"
+#include "linear_piece.h"
 
-class Bishop : public Piece {
-private:
-
+class Bishop : public LinearPiece {
 public:
-	Bishop(const Player color_in, const Tile &pos)
-		: Piece{ color_in, pos } {}
+	explicit Bishop(const Player color = Player::WHITE, const Tile &pos = Tile())
+		: LinearPiece{ color, pos } {}
 	~Bishop() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'B'; };
+	const char get_type() const { return 'B'; };
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &pos) const;
+	bool valid_placement(const Tile &new_pos) const {
+		return diagonal_path(get_pos(), new_pos);
+	}
+
+private:
+
 };
 
 #endif // BISHOP_H
