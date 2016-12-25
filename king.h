@@ -1,3 +1,9 @@
+/*
+*  Author: Alexander Zhu
+*  Date Created: November 20, 2016
+*  Description: Header file for King piece
+*/
+
 #ifndef KING_H
 #define KING_H
 
@@ -19,4 +25,4 @@ private:
 	bool moved_;  // Can only castle if !moved
 };
 
-#endif // KING_H
+#endif  // KING_H

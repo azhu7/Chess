@@ -1,3 +1,9 @@
+/*
+*  Author: Alexander Zhu
+*  Date Created: November 20, 2016
+*  Description: Header file for Knight piece
+*/
+
 #ifndef KNIGHT_H
 #define KNIGHT_H
 
@@ -20,4 +26,4 @@ public:
 	bool valid_placement(const Tile &new_pos) const;
 };
 
-#endif // KNIGHT_H
+#endif  // KNIGHT_H

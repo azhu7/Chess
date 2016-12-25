@@ -38,24 +38,71 @@ void MoveMaker::switch_turns() {
 	turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
 }
 
+bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
+	const Direction &direction) const {
+	Tile current_tile = old_pos;
+
+	// Determine direction to move
+	int vert_mvmt = -1;  // Down if South
+	int horiz_mvmt = -1;  // Left if West
+	if (direction == Direction::N || direction == Direction::NE || 
+		direction == Direction::NW) {
+		vert_mvmt = 1;  // Up if North
+	}
+	else if (direction == Direction::E || direction == Direction::W) {
+		vert_mvmt = 0;  // None if neither North or South
+	}
+	if (direction == Direction::E || direction == Direction::NE || 
+		direction == Direction::SE) {
+		horiz_mvmt = 1;  // Right if East
+	}
+	else if (direction == Direction::N || direction == Direction::S) {
+		horiz_mvmt = 0;  // None if neither West nor East
+	}
+
+	// Increment b/c don't check start tile
+	current_tile.row += vert_mvmt;
+	current_tile.col += horiz_mvmt;
+	// Scan for collisions
+	while (current_tile != new_pos) {
+		if (board_.get_tile(current_tile)) {
+			return true;
+		}
+		// Move in specified direction
+		current_tile.row += vert_mvmt;
+		current_tile.col += horiz_mvmt;
+	}
+	return false;
+}
+
 bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 	if (!(board_.tile_in_bounds(new_pos) && board_.tile_in_bounds(old_pos))) {
 		std::cout << "Input tile is out of bounds\n";
 		return false;
 	}
 
-	Piece *cur_piece = board_.get_tile(old_pos);
-	Piece *new_tile = board_.get_tile(new_pos);
-
+	Piece *&cur_piece = board_.get_tile(old_pos);
+	Piece *&new_tile = board_.get_tile(new_pos);
 	if (!cur_piece) {
 		return false;  // Player selected empty tile
 	}
 
 	// Players move their own pieces
-	bool correct_team = cur_piece->get_player() == turn_;
-	// Okay physical placement
-	bool placement = cur_piece->valid_placement(new_pos);
+	bool move_own_piece = cur_piece->get_player() == turn_;
+	// Can't move onto own piece
+	bool capture_own_piece = new_tile ? new_tile->get_player() == 
+		cur_piece->get_player() : false;
+	if (!move_own_piece) {
+		std::cout << "Can't move enemy piece\n";
+		return false;
+	}
+	else if (capture_own_piece) {
+		std::cout << "Can't capture own piece\n";
+		return false;
+	}
 
+	// Okay physical placement
+	bool okay_placement = cur_piece->valid_placement(new_pos);
 	// Check unique cases
 	char piece_type = cur_piece->get_type();
 	switch (cur_piece->get_type()) {
@@ -63,39 +110,35 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		// Pawn capture different than move
 		Piece *&target_tile = board_.get_tile(new_pos);
 		// If vertical move, make sure target spot is empty
-		if (placement) {
-			placement = !target_tile;
+		if (okay_placement) {
+			okay_placement = !target_tile;
 			if (abs(new_pos.row - old_pos.row) == 2) {
 				// Check tile one above/below pawn
 				Tile one_tile_away = Tile{ old_pos.row + (new_pos.row - old_pos.row) / 2, old_pos.col };
-				placement = placement && !board_.get_tile(one_tile_away);  // Both tiles clear
+				okay_placement = okay_placement && !board_.get_tile(one_tile_away);  // Both tiles clear
 			}
 		}
 		else {
 			// Otherwise, check if pawn is capturing an enemy piece
 			Pawn *temp_pawn = static_cast<Pawn *>(cur_piece);
-			placement = temp_pawn->valid_capture(new_pos) &&
+			okay_placement = temp_pawn->valid_capture(new_pos) &&
 				target_tile && target_tile->get_player() != turn_;
 		}
 		break;
 	}
-	case 'B': {
-		//Bishop *temp_bishop = static_cast<Bishop *>(cur_piece);
-		//Bishop::Direction move_direction = temp_bishop->get_direction(new_pos);
-		//placement = !detect_collision(old_pos, new_pos, move_direction);
+	case 'B': case 'R': case 'Q': {
+		if (okay_placement) {
+			// Check for any pieces between linear piece and target tile
+			LinearPiece *temp_linear_piece = static_cast<LinearPiece *>(cur_piece);
+			Direction move_direction = temp_linear_piece->get_direction(new_pos);
+			okay_placement = !collision(old_pos, new_pos, move_direction);
+		}
 		break;
 	}
-	case 'R': {
-		//placement = horizontal_collision(old_pos, new_pos);
-		break;
-	}
-	case 'Q': {
-		
-		break;
+	case 'K': {
+		// Check castle, update King position
 	}
 	}
-	// Can't move onto own piece
-	bool same_team = new_tile ? new_tile->get_player() == cur_piece->get_player() : false;
-
-	return correct_team && placement && !same_team;
+	// TODO: Checks on own piece = invalid; checks on enemy piece = update checked_
+	return okay_placement;
 }

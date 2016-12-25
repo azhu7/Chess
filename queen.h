@@ -1,3 +1,9 @@
+/*
+*  Author: Alexander Zhu
+*  Date Created: November 20, 2016
+*  Description: Header file for Queen piece
+*/
+
 #ifndef QUEEN_H
 #define QUEEN_H
 
@@ -25,4 +31,4 @@ public:
 	}
 };
 
-#endif // QUEEN_H
+#endif  // QUEEN_H

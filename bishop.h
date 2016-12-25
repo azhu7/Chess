@@ -1,3 +1,9 @@
+/*
+*  Author: Alexander Zhu
+*  Date Created: November 20, 2016
+*  Description: Header file for Bishop piece
+*/
+
 #ifndef BISHOP_H
 #define BISHOP_H
 
@@ -18,9 +24,9 @@ public:
 	}
 
 	// Inherited from LinearPiece class
-	/*const Direction &get_direction(const Tile &new_pos) const {
+	const Direction &get_direction(const Tile &new_pos) const {
 		return Direction::E;
-	}*/
+	}
 };
 
-#endif // BISHOP_H
+#endif  // BISHOP_H

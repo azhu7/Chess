@@ -1,3 +1,9 @@
+/*
+*  Author: Alexander Zhu
+*  Date Created: November 20, 2016
+*  Description: Header file for Rook piece
+*/
+
 #ifndef ROOK_H
 #define ROOK_H
 
@@ -24,4 +30,4 @@ public:
 	}
 };
 
-#endif // ROOK_H
+#endif  // ROOK_H

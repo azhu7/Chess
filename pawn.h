@@ -1,3 +1,9 @@
+/*
+*  Author: Alexander Zhu
+*  Date Created: November 20, 2016
+*  Description: Header file for abstract piece
+*/
+
 #ifndef PAWN_H
 #define PAWN_H
 
@@ -25,4 +31,4 @@ public:
 	bool valid_placement(const Tile &new_pos) const;
 };
 
-#endif // PAWN_H
+#endif  // PAWN_H

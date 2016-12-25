@@ -5,8 +5,6 @@
 *  Version: 1.3
 *
 *  TODO:
-*    Fix instruction input (next getline gets messed up)
-*	 Consider making move struct for brevity
 *    Player name for moves
 *	 Verbose output detailing moves
 *	 Save feature? Write moves to log for future replay
@@ -21,10 +19,12 @@
 #include <exception>
 #include <regex>
 #include <string>
+#include <limits>
+#include <ios>
 
 using namespace std;
 
-class InvalidInputException : public exception {
+/*class InvalidInputException : public exception {
 public:
 	InvalidInputException(const char *message)
 		: message{ message } {}
@@ -33,12 +33,15 @@ public:
 	}
 private:
 	const char *message;
-};
+};*/
 
+// Print Functions
 void print_instructions();
 void print_intro();
 void print_prompt(const MoveMaker &move_maker);
 void print_quit();
+
+// Parse Functions
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
 int parse_col_label(const char col_label);
 
@@ -68,7 +71,7 @@ int main(int argc, char *argv[]) {
 					valid_move = move_maker.make_move(old_pos, new_pos);
 				}
 				else {
-					cerr << "Invalid input -- try again.\n";
+					cerr << "Invalid input -- try again. Enter \"help\" for instructions.\n";
 				}
 			}
 		}
@@ -77,22 +80,30 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void print_instructions() {
-	cout << "\nRules are standard chess rules.\n";
-	cout << "Usage:\n";
-	cout << "\tMove: [a-h][1-8] [a-h][1-8]\n";
-	cout << "\tShow Instructions: help\n";
-	cout << "\tQuit: quit\n";
-}
+////////// BEGIN PRINT FUNCTIONS //////////
 
 void print_intro() {
-	char option = 'y';  // TEMP PLACEHOLDER
+	void print_instructions();
+	char option;
 	cout << "Hello! Welcome to chess.\n";
 	cout << "Would you like to see the instructions? (y/n): ";
-	if (option == 'y') {
+	if (cin >> option && option == 'y') {
 		print_instructions();
 	}
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cin.clear();
+
 	cout << "Let's get started!\n\n";
+}
+
+void print_instructions() {
+	cout << " --------------------------------\n";
+	cout << "| Rules are standard chess rules.|\n";
+	cout << "| Usage:                         |\n";
+	cout << "|   Move: [a-h][1-8] [a-h][1-8]  |\n";
+	cout << "|   Show Instructions: help      |\n";
+	cout << "|   Quit: quit                   |\n";
+	cout << " --------------------------------\n";
 }
 
 void print_prompt(const MoveMaker &move_maker) {
@@ -105,19 +116,15 @@ void print_quit() {
 	cout << "Your game log has been saved to: _____\n";
 }
 
+////////// BEGIN PARSE FUNCTIONS //////////
+
 // REQUIRES input is of format: [a-h][1-8] [a-h][1-8]
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos) {
 	// Read in rows and correct to zero-indexed
 	old_pos.row = input[1] - '0' - 1;
 	new_pos.row = input[4] - '0' - 1;
-	char old_col_label = input[0], new_col_label = input[3];
-	try {
-		old_pos.col = parse_col_label(old_col_label);
-		new_pos.col = parse_col_label(new_col_label);
-	}
-	catch (InvalidInputException e) {
-		throw e;
-	}
+	old_pos.col = parse_col_label(input[0]);
+	new_pos.col = parse_col_label(input[3]);
 }
 
 // REQUIRES col_label is [a-h]
