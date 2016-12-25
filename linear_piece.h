@@ -17,6 +17,15 @@ public:
 		: Piece{ color, pos } {}
 	~LinearPiece() {}
 
+	enum class Direction {
+		N, S, E, W, NE, NW, SE, SW
+	};
+
+	// REQUIRES Straight path from current pos to new_pos
+	// EFFECTS  Determine relative direction to new_pos.
+	//			Used to aid MoveMaker detect collision functions.
+	//virtual const Direction &get_direction(const Tile &new_pos) const = 0;
+
 protected:
 	// EFFECTS  Return true if horizontal path from old pos to new pos
 	//			Used by Rook and Queen

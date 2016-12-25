@@ -17,8 +17,10 @@ public:
 		return diagonal_path(get_pos(), new_pos);
 	}
 
-private:
-
+	// Inherited from LinearPiece class
+	/*const Direction &get_direction(const Tile &new_pos) const {
+		return Direction::E;
+	}*/
 };
 
 #endif // BISHOP_H

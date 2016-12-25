@@ -6,6 +6,13 @@
 #include "queen.h"
 #include "king.h"
 
+static const Tile P1_KING_START = Tile{ 0, 4 };
+static const Tile P2_KING_START = Tile{ 7, 4 };
+
+MoveMaker::MoveMaker(Board & board)
+	: board_{ board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START }, 
+	turn_ { Player::WHITE } {}
+
 bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 	if (!valid_move(old_pos, new_pos)) {
 		std::cout << ">>> Invalid move. Try again! <<<\n";
@@ -72,8 +79,17 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		}
 		break;
 	}
-	case 'B': case 'R': case 'Q': {
-		// Linear pieces
+	case 'B': {
+		//Bishop *temp_bishop = static_cast<Bishop *>(cur_piece);
+		//Bishop::Direction move_direction = temp_bishop->get_direction(new_pos);
+		//placement = !detect_collision(old_pos, new_pos, move_direction);
+		break;
+	}
+	case 'R': {
+		//placement = horizontal_collision(old_pos, new_pos);
+		break;
+	}
+	case 'Q': {
 		
 		break;
 	}

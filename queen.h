@@ -19,8 +19,10 @@ public:
 			vertical_path(cur_pos, new_pos);
 	}
 
-private:
-
+	// Inherited from LinearPiece class
+	const Direction &get_direction(const Tile &new_pos) const {
+		return Direction::E;
+	}
 };
 
 #endif // QUEEN_H

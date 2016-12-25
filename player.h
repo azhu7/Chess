@@ -2,8 +2,6 @@
 *  Author: Alexander Zhu
 *  Date Created: November 20, 2016
 *  Description: Header file for Player enum
-*
-*  TODO: Implement functions all in .h file?
 */
 
 #ifndef PLAYER_H
@@ -17,6 +15,9 @@ enum class Player : char {
 };
 
 // Print Player as integer value
-std::ostream &operator<<(std::ostream &os, const Player p);
+static std::ostream &operator<<(std::ostream &os, const Player p) {
+	os << static_cast<std::underlying_type<Player>::type>(p);
+	return os;
+}
 
 #endif  // PLAYER_H

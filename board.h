@@ -8,7 +8,6 @@
 #define BOARD_H
 
 #include "piece.h"
-#include "tile.h"
 
 extern const int kNumRows;
 extern const int kNumCols;

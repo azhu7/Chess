@@ -18,9 +18,6 @@ public:
 
 	// Inherited from Piece base class
 	bool valid_placement(const Tile &new_pos) const;
-
-private:
-
 };
 
 #endif // KNIGHT_H
