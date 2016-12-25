@@ -2,5 +2,6 @@
 Chess game implemented in C++
 
 Usage  
-To move a piece, enter its current tile, then the destination tile. Example: A2 C3  
-To quit, type 'q'
+To move a piece, enter current tile, then destination tile. Example: 'A2 C3'  
+For help, type 'help'  
+To quit, type 'quit'
