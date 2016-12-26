@@ -14,8 +14,8 @@
 *	 Detect check, checkmate, get out of check, stalemate (may need hash for pieces)
 */
 
-#include "board.h"
-#include "move_maker.h"
+#include "../include/board.h"
+#include "../include/move_maker.h"
 #include <iostream>
 #include <unordered_map>
 #include <exception>
