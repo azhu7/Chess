@@ -6,10 +6,10 @@ using std::cout;
 
 void bishop_valid_placement_test();
 
-/*int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 	bishop_valid_placement_test();
 	return 0;
-}*/
+}
 
 void bishop_valid_placement_test() {
 	cout << "Starting bishop valid_placement tests\n";

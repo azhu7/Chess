@@ -25,7 +25,7 @@ public:
 
 	// Inherited from LinearPiece class
 	Direction get_direction(const Tile &new_pos) const {
-		std::cout << "Unimplemented\n";
+		std::cout << "Unimplemented!!\n";
 		return Direction::E;
 	}
 };
