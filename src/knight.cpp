@@ -1,4 +1,4 @@
-#include "knight.h"
+#include "../include/knight.h"
 
 bool Knight::l_shape_move(const Tile &old_pos, const Tile &new_pos)
 {

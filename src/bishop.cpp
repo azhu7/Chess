@@ -1,1 +1,1 @@
-#include "bishop.h"
+#include "../include/bishop.h"
