@@ -16,7 +16,7 @@ public:
 	~Knight() {}
 
 	// Inherited from Piece base class
-	const char get_type() const { return 'N'; }
+	char get_type() const { return 'N'; }
 
 	// EFFECTS  Return true if l-shaped path from old pos to new pos
 	//			Used by Knight

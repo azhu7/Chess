@@ -16,7 +16,7 @@ public:
 	~Queen() {}
 
 	// Inherited from Piece base class
-	const char get_type() const { return 'Q'; }
+	char get_type() const { return 'Q'; }
 
 	// Inherited from Piece base class
 	bool valid_placement(const Tile &new_pos) const {
@@ -26,7 +26,8 @@ public:
 	}
 
 	// Inherited from LinearPiece class
-	const Direction get_direction(const Tile &new_pos) const {
+	Direction get_direction(const Tile &new_pos) const {
+		std::cout << "Unimplemented\n";
 		return Direction::E;
 	}
 };

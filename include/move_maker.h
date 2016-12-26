@@ -14,7 +14,7 @@
 
 class MoveMaker {
 public:
-	explicit MoveMaker::MoveMaker(Board &board = Board());
+	explicit MoveMaker(Board *board);
 	~MoveMaker() {};
 
 	// EFFECTS  Return current player
@@ -27,7 +27,7 @@ public:
 
 private:
 	typedef LinearPiece::Direction Direction;  // TODO: Questionable Style?
-	Board &board_;
+	Board *board_;
 	Tile p1_king;  // Track each player's king to help with check detection
 	Tile p2_king;
 	Player turn_;

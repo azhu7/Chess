@@ -16,7 +16,7 @@ public:
 	~King() {}
 
 	// Inherited from Piece base class
-	const char get_type() const { return 'K'; }
+	char get_type() const { return 'K'; }
 
 	// Inherited from Piece base class
 	bool valid_placement(const Tile &new_pos) const;

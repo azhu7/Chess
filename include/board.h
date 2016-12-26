@@ -17,7 +17,7 @@ static const int kNumCols = 8;
 // MoveMaker wrapper required to reinforce rules for making certain moves.
 class Board {
 public:
-	explicit Board();
+	Board();
 	~Board();
 
 	// REQUIRES pos is valid tile
@@ -28,12 +28,12 @@ public:
 		return board_[pos.row][pos.col];
 	}
 
-	// REQUIRES pos is valid tile
+	/*// REQUIRES pos is valid tile
 	// EFFECTS  Return Piece pointer at specified tile
 	Piece *get_tile(const Tile &pos) {
-		return const_cast<Piece *>(static_cast<const Board *>(this)->get_tile(pos));
-		//return board_[pos.row][pos.col];
-	}
+		//return const_cast<Piece *>(static_cast<const Board *>(this)->get_tile(pos));
+		return board_[pos.row][pos.col];
+	}*/
 
 	// REQUIRES pos is valid tile
 	// EFFECTS  Return reference to Piece pointer at specified tile
@@ -58,7 +58,7 @@ public:
 	// MODIFIES board_
 	// EFFECTS  Move piece to new tile
 	void move(const Tile &old_pos, const Tile &new_pos) {
-		set_tile(new_pos, get_tile(old_pos));  // Move piece
+		set_tile(new_pos, (*this)[old_pos]);  // Move piece
 		set_tile(old_pos, nullptr);  // old_pos is empty now
 	}
 

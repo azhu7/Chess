@@ -15,17 +15,17 @@
 class Piece {
 public:
 	explicit Piece(const Player color = Player::WHITE, const Tile &pos = Tile())
-		: color_{ color }, col_{ pos.col }, row_{ pos.row } {}
+		: color_{ color }, row_{ pos.row }, col_{ pos.col } {}
 	Piece(const Piece &other);  // TODO  Remove copy ctor and assignment operator b/c don't need?
 	Piece &operator=(const Piece &other);
 
-	~Piece() {}
+	virtual ~Piece() {}
 
 	const Player &get_player() const { return color_; }
 
-	const int get_row() const { return row_; }
+	int get_row() const { return row_; }
 
-	const int get_col() const { return col_; }
+	int get_col() const { return col_; }
 
 	const Tile get_pos() const { return Tile{ row_, col_ }; }
 
@@ -35,7 +35,7 @@ public:
 	}
 
 	// EFFECTS  Return piece type as char ('P' = Pawn, 'R' = Rook, etc.)
-	virtual const char get_type() const = 0;
+	virtual char get_type() const = 0;
 
 	// REQUIRES pos is a valid coordinate
 	// EFFECTS  Determine if piece is physically allowed to move to new position.

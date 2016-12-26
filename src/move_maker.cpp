@@ -11,8 +11,8 @@ static const Tile P2_KING_START = Tile{ 7, 4 };
 
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
-MoveMaker::MoveMaker(Board & board)
-	: board_{ board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START }, 
+MoveMaker::MoveMaker(Board *board)
+	: board_{ board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START },
 	turn_ { Player::WHITE } {}
 
 bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
@@ -21,8 +21,8 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 		return false;  // Unsuccessful move
 	}
 
-	Piece *cur_piece = board_[old_pos];
-	Piece *target_tile = board_[new_pos];
+	Piece *cur_piece = (*board_)[old_pos];
+	Piece *target_tile = (*board_)[new_pos];
 	if (target_tile) {
 		// Capture enemy piece
 		assert(target_tile->get_player() != turn_);  // Make sure enemy piece
@@ -30,8 +30,8 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 		target_tile = nullptr;
 	}
 	cur_piece->set_pos(new_pos);  // Update piece coordinates
-	board_.move(old_pos, new_pos);  // Move piece
-	assert(!board_.get_tile(old_pos));  // Old tile should contain nullptr
+	board_->move(old_pos, new_pos);  // Move piece
+	assert(!board_->get_tile(old_pos));  // Old tile should contain nullptr
 	switch_turns();  // Switch turns upon successful move
 	return true;
 }
@@ -69,7 +69,7 @@ bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
 	current_tile.col += horiz_mvmt;
 	// Scan for collisions
 	while (current_tile != new_pos) {
-		if (board_.get_tile(current_tile)) {
+		if (board_->get_tile(current_tile)) {
 			return true;
 		}
 		// Move in specified direction
@@ -80,13 +80,13 @@ bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
 }
 
 bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
-	if (!(board_.tile_in_bounds(new_pos) && board_.tile_in_bounds(old_pos))) {
+	if (!(board_->tile_in_bounds(new_pos) && board_->tile_in_bounds(old_pos))) {
 		std::cout << "Input tile is out of bounds\n";
 		return false;
 	}
 
-	Piece *cur_piece = board_[old_pos];
-	Piece *new_tile = board_[new_pos];
+	Piece *cur_piece = (*board_)[old_pos];
+	Piece *new_tile = (*board_)[new_pos];
 	if (!cur_piece) {
 		return false;  // Player selected empty tile
 	}
@@ -109,17 +109,17 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 	bool okay_placement = cur_piece->valid_placement(new_pos);
 	// Check unique cases
 	char piece_type = cur_piece->get_type();
-	switch (cur_piece->get_type()) {
+	switch (piece_type) {
 	case 'P': {
 		// Pawn capture different than move
-		Piece *target_tile = board_[new_pos];
+		const Piece *target_tile = board_->get_tile(new_pos);
 		// If vertical move, make sure target spot is empty
 		if (okay_placement) {
 			okay_placement = !target_tile;
 			if (abs(new_pos.row - old_pos.row) == 2) {
 				// Check tile one above/below pawn
 				Tile one_tile_away = Tile{ old_pos.row + (new_pos.row - old_pos.row) / 2, old_pos.col };
-				okay_placement = okay_placement && !board_.get_tile(one_tile_away);  // Both tiles clear
+				okay_placement = okay_placement && !board_->get_tile(one_tile_away);  // Both tiles clear
 			}
 		}
 		else {

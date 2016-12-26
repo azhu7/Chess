@@ -21,7 +21,7 @@ public:
 	~Pawn() {}
 
 	// Inherited from Piece base class
-	const char get_type() const { return 'P'; };
+	char get_type() const { return 'P'; };
 
 	// REQUIRES (new_col, new_row) tile contains enemy piece, or en passant
 	// EFFECTS  Determine if capture is valid

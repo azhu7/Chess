@@ -38,7 +38,7 @@ int parse_col_label(const char col_label);
 
 int main(int argc, char *argv[]) {
 	Board board;
-	MoveMaker move_maker{ board };
+	MoveMaker move_maker{ &board };
 	regex move{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
 	print_intro();
 
