@@ -9,8 +9,8 @@
 
 #include "piece.h"
 
-static constexpr int kNumRows = 8;  // TODO: Want to define in cpp, but board_ needs here
-static constexpr int kNumCols = 8;
+static const int kNumRows = 8;  // TODO: Want to define in cpp, but board_ needs here
+static const int kNumCols = 8;
 
 // Simple board: pieces are stored in 8x8 array of pointers to pieces.
 // Provides functions for accessing and updating board.
@@ -20,10 +20,24 @@ public:
 	explicit Board();
 	~Board();
 
-	// REQUIRES row and col are valid
+	// REQUIRES pos is valid tile
+	// EFFECTS  Return const Piece pointer at specified tile
+	const Piece *get_tile(const Tile &pos) const {
+		assert(pos.col >= 0 && pos.col < kNumCols);
+		assert(pos.row >= 0 && pos.row < kNumRows);
+		return board_[pos.row][pos.col];
+	}
+
+	// REQUIRES pos is valid tile
+	// EFFECTS  Return Piece pointer at specified tile
+	Piece *get_tile(const Tile &pos) {
+		return const_cast<Piece *>(static_cast<const Board *>(this)->get_tile(pos));
+		//return board_[pos.row][pos.col];
+	}
+
+	// REQUIRES pos is valid tile
 	// EFFECTS  Return reference to Piece pointer at specified tile
-	Piece *get_tile(const Tile &pos) const {
-		// Check in-bounds requirement
+	Piece *&operator[](const Tile &pos) {
 		assert(pos.col >= 0 && pos.col < kNumCols);
 		assert(pos.row >= 0 && pos.row < kNumRows);
 		return board_[pos.row][pos.col];

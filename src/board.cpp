@@ -67,7 +67,7 @@ std::ostream &operator<<(std::ostream &os, const Board &board) {
 		os << row + 1 << " | ";  // LHS key
 		for (int col = 0; col < kNumCols; ++col) {
 			cur_tile.col = col;
-			Piece *cur_piece = board.get_tile(cur_tile);
+			const Piece *cur_piece = board.get_tile(cur_tile);
 			if (cur_piece) {
 				os << cur_piece;
 			}

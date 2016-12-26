@@ -2,7 +2,7 @@
 *  Author: Alexander Zhu
 *  Date Created: November 20, 2016
 *  Description: Driver class for Chess game
-*  Version: 1.3
+*  Version: 1.4
 *
 *  TODO:
 *    Player name for moves
@@ -25,17 +25,6 @@
 #include <ios>
 
 using namespace std;
-
-/*class InvalidInputException : public exception {
-public:
-	InvalidInputException(const char *message)
-		: message{ message } {}
-	const char *what() const throw() {
-		return message;
-	}
-private:
-	const char *message;
-};*/
 
 // Print Functions
 void print_instructions();

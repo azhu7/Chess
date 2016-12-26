@@ -3,3 +3,7 @@
 ################################################################################
 
 /Debug
+/x64/Debug
+/Chess.vcxproj
+/Chess.vcxproj.filters
+/Chess.vcxproj.user
