@@ -2,7 +2,7 @@
 Chess game implemented in C++
 
 Dependencies:
->g++-4.9 for <regex> support  
+>g++-4.9 for &lt;regex&gt; support  
 
 Usage:
 >To move a piece, enter current tile, then destination tile. Example: 'A2 C3'  
