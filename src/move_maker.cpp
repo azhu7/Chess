@@ -1,10 +1,10 @@
-#include "../include/move_maker.h"
-#include "../include/pawn.h"
-#include "../include/bishop.h"
-#include "../include/knight.h"
-#include "../include/rook.h"
-#include "../include/queen.h"
-#include "../include/king.h"
+#include "move_maker.h"
+#include "pawn.h"
+#include "bishop.h"
+#include "knight.h"
+#include "rook.h"
+#include "queen.h"
+#include "king.h"
 
 static const Tile P1_KING_START = Tile{ 0, 4 };
 static const Tile P2_KING_START = Tile{ 7, 4 };

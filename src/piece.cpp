@@ -1,4 +1,4 @@
-#include "../include/piece.h"
+#include "piece.h"
 
 Piece::Piece(const Piece & other)
 {

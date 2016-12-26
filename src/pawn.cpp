@@ -1,4 +1,4 @@
-#include "../include/pawn.h"
+#include "pawn.h"
 
 bool Pawn::valid_capture(const Tile &new_pos) const {
 	std::cout << "TODO: account for en passant\n";
