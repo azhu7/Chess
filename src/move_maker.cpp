@@ -9,6 +9,8 @@
 static const Tile P1_KING_START = Tile{ 0, 4 };
 static const Tile P2_KING_START = Tile{ 7, 4 };
 
+////////// BEGIN PUBLIC FUNCTIONS //////////
+
 MoveMaker::MoveMaker(Board & board)
 	: board_{ board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START }, 
 	turn_ { Player::WHITE } {}
@@ -19,8 +21,8 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 		return false;  // Unsuccessful move
 	}
 
-	Piece *&cur_piece = board_.get_tile(old_pos);
-	Piece *&target_tile = board_.get_tile(new_pos);
+	Piece *cur_piece = board_.get_tile(old_pos);
+	Piece *target_tile = board_.get_tile(new_pos);
 	if (target_tile) {
 		// Capture enemy piece
 		assert(target_tile->get_player() != turn_);  // Make sure enemy piece
@@ -33,6 +35,8 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 	switch_turns();  // Switch turns upon successful move
 	return true;
 }
+
+////////// BEGIN PRIVATE FUNCTIONS //////////
 
 void MoveMaker::switch_turns() {
 	turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
@@ -81,8 +85,8 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		return false;
 	}
 
-	Piece *&cur_piece = board_.get_tile(old_pos);
-	Piece *&new_tile = board_.get_tile(new_pos);
+	Piece *cur_piece = board_.get_tile(old_pos);
+	Piece *new_tile = board_.get_tile(new_pos);
 	if (!cur_piece) {
 		return false;  // Player selected empty tile
 	}
@@ -108,7 +112,7 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 	switch (cur_piece->get_type()) {
 	case 'P': {
 		// Pawn capture different than move
-		Piece *&target_tile = board_.get_tile(new_pos);
+		Piece *target_tile = board_.get_tile(new_pos);
 		// If vertical move, make sure target spot is empty
 		if (okay_placement) {
 			okay_placement = !target_tile;

@@ -10,6 +10,8 @@
 *	 Save feature? Write moves to log for future replay
 *	 How to check for correct test output state?
 *	 Remove Board object from main altogether? (only keep MoveMaker?)
+*	 Stats feature. type stats to see some stats like #moves, pieces captured
+*	 Detect check, checkmate, get out of check, stalemate (may need hash for pieces)
 */
 
 #include "board.h"
@@ -66,7 +68,7 @@ int main(int argc, char *argv[]) {
 				else if (input == "help") {
 					print_instructions();
 				}
-				else if (regex_match(input, move)) {
+				else if (regex_match(input.substr(0, 5), move)) {
 					parse_move(input, old_pos, new_pos);
 					valid_move = move_maker.make_move(old_pos, new_pos);
 				}
@@ -84,7 +86,7 @@ int main(int argc, char *argv[]) {
 
 void print_intro() {
 	void print_instructions();
-	char option;
+	char option = 0;
 	cout << "Hello! Welcome to chess.\n";
 	cout << "Would you like to see the instructions? (y/n): ";
 	if (cin >> option && option == 'y') {

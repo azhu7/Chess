@@ -9,16 +9,18 @@
 #include <iostream>
 #include <cassert>
 
-const int kNumRows = 8;
-const int kNumCols = 8;
-
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
 Board::Board() {
 	// Create 8x8 array of nullptrs
-	board_ = new Piece**[kNumRows];
+	/*board_ = new Piece**[kNumRows];
 	for (int i = 0; i < kNumCols; ++i) {
 		board_[i] = new Piece*[kNumCols] {nullptr};
+	}*/
+	for (int i = 0; i < kNumRows; ++i) {
+		for (int j = 0; j < kNumCols; ++j) {
+			board_[i][j] = nullptr;
+		}
 	}
 	// Place all pieces onto board
 	place_pawns();
@@ -27,6 +29,12 @@ Board::Board() {
 
 Board::~Board() {
 	for (int row = 0; row < kNumRows; ++row) {
+		for (int col = 0; col < kNumCols; ++col) {
+			delete board_[row][col];
+			board_[row][col] = nullptr;
+		}
+	}
+	/*for (int row = 0; row < kNumRows; ++row) {
 		// Delete all pieces in column
 		for (int col = 0; col < kNumCols; ++col) {
 			delete board_[row][col];
@@ -38,7 +46,7 @@ Board::~Board() {
 	}
 	// Delete rows
 	delete board_;
-	board_ = nullptr;
+	board_ = nullptr;*/
 }
 
 // EFFECTS  Helper function for printing out column labels
@@ -51,7 +59,6 @@ void print_col_labels(std::ostream &os) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Board &board) {
-	// Print column names
 	print_col_labels(os);  // Upper key
 
 	// Print rows from bottom up
