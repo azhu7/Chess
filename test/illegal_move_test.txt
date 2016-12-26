@@ -1,3 +1,4 @@
+n
 a2 b2  // W invalid pawn move R
 b2 a2  // W invalid pawn move L
 a1 a0  // W out-of-bounds

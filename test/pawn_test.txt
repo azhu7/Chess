@@ -1,3 +1,4 @@
+n
 a2 a4  // W
 a7 a5  // B
 a4 a5  // W invalid pawn move up
