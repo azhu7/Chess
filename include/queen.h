@@ -26,7 +26,7 @@ public:
 	}
 
 	// Inherited from LinearPiece class
-	const Direction &get_direction(const Tile &new_pos) const {
+	const Direction get_direction(const Tile &new_pos) const {
 		return Direction::E;
 	}
 };

@@ -9,8 +9,8 @@
 
 #include "piece.h"
 
-extern const int kNumRows;
-extern const int kNumCols;
+static constexpr int kNumRows = 8;  // TODO: Want to define in cpp, but board_ needs here
+static constexpr int kNumCols = 8;
 
 // Simple board: pieces are stored in 8x8 array of pointers to pieces.
 // Provides functions for accessing and updating board.
@@ -22,7 +22,7 @@ public:
 
 	// REQUIRES row and col are valid
 	// EFFECTS  Return reference to Piece pointer at specified tile
-	Piece *&get_tile(const Tile &pos) const {
+	Piece *get_tile(const Tile &pos) const {
 		// Check in-bounds requirement
 		assert(pos.col >= 0 && pos.col < kNumCols);
 		assert(pos.row >= 0 && pos.row < kNumRows);
@@ -44,15 +44,16 @@ public:
 	// MODIFIES board_
 	// EFFECTS  Move piece to new tile
 	void move(const Tile &old_pos, const Tile &new_pos) {
-		swap(get_tile(old_pos), get_tile(new_pos));
+		set_tile(new_pos, get_tile(old_pos));  // Move piece
+		set_tile(old_pos, nullptr);  // old_pos is empty now
 	}
 
 	// EFFECTS  Pretty print the board
-	// TODO		This doesn't need to be a friend function...
+	// TODO		This doesn't need to be a friend function...but should it be?
 	friend std::ostream &operator<<(std::ostream &os, const Board &board);
 
 private:
-	Piece ***board_;  // 8x8 board of pointers to pieces
+	Piece *board_[kNumRows][kNumCols];  // 8x8 board of pointers to pieces
 
 	// EFFECTS  Generate a dynamically allocated Piece object
 	Piece *piece_factory(const Player color, const Tile &pos,
@@ -65,15 +66,6 @@ private:
 	// MODIFIES board_
 	// EFFECTS  Places non-pawn pieces on board during initialization
 	void place_pieces();
-
-	// MODIFIES p1 and p2
-	// EFFECTS  Swaps the pointed-to pieces.
-	//			Used in Board::move() for moving pieces around.
-	void swap(Piece *&p1, Piece *&p2) {
-		Piece *temp = p2;
-		p2 = p1;
-		p1 = temp;
-	}
 };
 
 #endif  // BOARD_H
