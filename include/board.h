@@ -17,6 +17,14 @@ static const int kNumCols = 8;
 // MoveMaker wrapper required to reinforce rules for making certain moves.
 class Board {
 public:
+	// Constants for castling
+	static const int kLeftRookInitCol = 0;
+	static const int kRightRookInitCol = 7;
+	static const int kLeftRookCastledCol = 3;
+	static const int kRightRookCastledCol = 5;
+	static const int kKingLeftCastledCol = 2;
+	static const int kKingRightCastledCol = 6;
+
 	Board();
 	~Board();
 

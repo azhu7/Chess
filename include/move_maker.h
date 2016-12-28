@@ -10,6 +10,7 @@
 
 #include "board.h"
 #include "player.h"
+#include "king.h"
 #include "linear_piece.h"
 
 // REQUIRES User must initialize MoveMaker with a Board object
@@ -40,24 +41,34 @@ private:
 
 	// MODIFIES turn_
 	// EFFECTS  Updates whose turn it is
-	void switch_turns();
+	void switch_turns() {
+		turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
+	}
 
 	// REQUIRES Straight path from current pos to new_pos
 	// EFFECTS  Check for any pieces between old_pos and new_pos
 	bool collision(const Tile &old_pos, const Tile &new_pos, 
 		const Direction &direction) const;
 
-	// REQUIRES king is a King piece
 	// MODIFIES p1_king or p2_king depending on which player king belongs to
 	// EFFECTS  Update the king's position as tracked by MoveMaker
-	void update_king_pos(const Piece *king) {
-		if (king->get_player() == Player::WHITE)
+	void set_king_pos(const King *king) {
+		if (king->get_player() == Player::WHITE) {
 			p1_king = std::move(king->get_pos());
-		else
+		}
+		else {
 			p2_king = std::move(king->get_pos());
+		}
 	}
 
-	bool valid_castle(const Tile &cur_pos) const;
+	// REQUIRES Called upon a valid castle
+	// MODIFIES rook, board_
+	// EFFECTS  Moves rook to correct castle position. Called by make_move()
+	void castle_update_rook(const Tile &old_pos, const Tile &new_pos);
+
+	// REQUIRES cur_pos is coordinate of a King piece
+	// EFFECTS  Check if king can castle to new_pos
+	bool valid_castle(const King *king, const Tile &new_pos) const;
 
 	// EFFECTS  Determine if piece can be moved to new tile.
 	//			Make sure piece moves according to Chess rules.

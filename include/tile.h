@@ -23,9 +23,11 @@ struct Tile {
 		return *this;
 	}
 	~Tile() {}
-
+	bool operator==(const Tile &other) const {
+		return row == other.row && col == other.col;
+	}
 	bool operator!=(const Tile &other) const {
-		return row != other.row || col != other.col;
+		return !(*this == other);
 	}
 	int row;
 	int col;

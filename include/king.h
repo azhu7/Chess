@@ -12,13 +12,13 @@
 class King : public Piece {
 public:
 	explicit King(const Player color = Player::WHITE, const Tile &pos = Tile())
-		: Piece{ color, pos }, moved_{ false } {}
+		: Piece{ color, pos }, has_moved_{ false } {}
 	~King() {}
 
-	bool get_moved() const { return moved_; }
+	bool has_moved() const { return has_moved_; }
 
 	// Can only set to true because can't "un-move"
-	void set_moved() { moved_ = true; }
+	void set_moved() { has_moved_ = true; }
 
 	// Inherited from Piece base class
 	char get_type() const override { return 'K'; }
@@ -31,7 +31,7 @@ public:
 	}
 
 private:
-	bool moved_;  // Can only castle if !moved_
+	bool has_moved_;  // Can only castle if !moved_
 };
 
 #endif  // KING_H

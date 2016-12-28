@@ -4,7 +4,6 @@
 #include "../include/knight.h"
 #include "../include/rook.h"
 #include "../include/queen.h"
-#include "../include/king.h"
 
 static const Tile P1_KING_START = Tile{ 0, 4 };
 static const Tile P2_KING_START = Tile{ 7, 4 };
@@ -20,21 +19,30 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 		std::cout << ">>> Invalid move. Try again! <<<\n";
 		return false;  // Unsuccessful move
 	}
-
 	Piece *cur_piece = (*board_)[old_pos];
-	Piece *target_tile = (*board_)[new_pos];
+	const Piece *target_tile = board_->get_tile(new_pos);
 	if (target_tile) {
 		// Capture enemy piece
 		assert(target_tile->get_player() != turn_);  // Make sure enemy piece
 		delete target_tile;
 		target_tile = nullptr;
 	}
-	cur_piece->set_pos(new_pos);  // Update piece coordinates
-	if (cur_piece->get_type() == 'K') {
-		King *temp_king = static_cast<King *>(cur_piece);
-		temp_king->set_moved();  // King has moved (can no longer castle)
-		update_king_pos(cur_piece);
+	// Rook special case
+	if (cur_piece->get_type() == 'R') {
+		Rook *temp_rook = static_cast<Rook *>(cur_piece);
+		temp_rook->set_moved();  // Rook has moved (can no longer castle on this side)
 	}
+	// King special case
+	else if (cur_piece->get_type() == 'K') {
+		King *temp_king = static_cast<King *>(cur_piece);
+		if (valid_castle(temp_king, new_pos)) {
+			// On castle, update rook as well
+			castle_update_rook(old_pos, new_pos);
+		}
+		temp_king->set_moved();  // King has moved (can no longer castle)
+		set_king_pos(temp_king);
+	}
+	cur_piece->set_pos(new_pos);  // Update piece coordinates
 	board_->move(old_pos, new_pos);  // Move piece
 	assert(!board_->get_tile(old_pos));  // Old tile should contain nullptr
 	switch_turns();  // Switch turns upon successful move
@@ -42,10 +50,6 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 }
 
 ////////// BEGIN PRIVATE FUNCTIONS //////////
-
-void MoveMaker::switch_turns() {
-	turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
-}
 
 bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
 	const Direction &direction) const {
@@ -84,9 +88,56 @@ bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
 	return false;
 }
 
-bool MoveMaker::valid_castle(const Tile & cur_pos) const
-{
-	std::cout << "Unimplemented\n";
+void MoveMaker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
+	// lambda to move rook to castled position
+	static auto move_rook_to_castled = [&](const int rook_col, 
+		const int castled_col) {
+		const Tile rook_pos{ old_pos.row, rook_col };
+		const Tile castled_pos{ old_pos.row, castled_col };
+		Rook *temp_rook = static_cast<Rook *>((*board_)[rook_pos]);
+		board_->move(rook_pos, castled_pos);
+		temp_rook->set_moved();
+	};
+	if (new_pos.col > old_pos.col) {
+		// Castle to the right. Adjust right rook.
+		move_rook_to_castled(Board::kRightRookInitCol, Board::kRightRookCastledCol);
+	}
+	else {
+		// Castle to the left. Adjust left rook.
+		move_rook_to_castled(Board::kLeftRookInitCol, Board::kLeftRookCastledCol);
+	}
+}
+
+bool MoveMaker::valid_castle(const King *king, const Tile &new_pos) const {
+	if (king->has_moved()) {
+		return false;  // Can't castle if already moved
+	}
+	const Tile cur_pos = king->get_pos();
+	assert(cur_pos.col == P1_KING_START.col);  // king should be in starting position
+
+	// lambda to check that rook hasn't moved and no collisions from king to rook
+	static auto rook_and_collision_check = [&](const Tile &cur_pos, const int rook_col, 
+		const Direction direction) {
+		// Check corner for rook
+		const Tile rook_tile = Tile{ cur_pos.row, rook_col };
+		const Piece *temp_piece = (*board_)[rook_tile];
+		if (temp_piece->get_type() == 'R') {
+			const Rook *temp_rook = static_cast<const Rook *>(temp_piece);
+			// Check that rook has not moved and no horizontal collision to the right
+			return !(temp_rook->has_moved() || collision(cur_pos, rook_tile, direction));
+		}
+		return false;
+	};
+
+	// Castle right: check right of king
+	if (new_pos == Tile{ cur_pos.row, Board::kKingRightCastledCol }) {
+		return rook_and_collision_check(cur_pos, Board::kRightRookInitCol, Direction::E);
+	}
+	// Castle left: check left of king
+	else if (new_pos == Tile{ cur_pos.row, Board::kKingLeftCastledCol }) {
+		return rook_and_collision_check(cur_pos, Board::kLeftRookInitCol, Direction::W);
+	}
+	// new_pos is not a valid castle tile
 	return false;
 }
 
@@ -96,8 +147,8 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		return false;
 	}
 
-	Piece *cur_piece = (*board_)[old_pos];
-	Piece *new_tile = (*board_)[new_pos];
+	const Piece *cur_piece = board_->get_tile(old_pos);
+	const Piece *new_tile = board_->get_tile(new_pos);
 	if (!cur_piece) {
 		return false;  // Player selected empty tile
 	}
@@ -124,18 +175,18 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 	case 'P': {
 		// Pawn capture different than move
 		const Piece *target_tile = board_->get_tile(new_pos);
-		// If vertical move, make sure target spot is empty
 		if (okay_placement) {
-			okay_placement = !target_tile;
+			okay_placement = !target_tile;  // If vertical move, make sure target spot is empty
 			if (abs(new_pos.row - old_pos.row) == 2) {
 				// Check tile one above/below pawn
-				Tile one_tile_away = Tile{ old_pos.row + (new_pos.row - old_pos.row) / 2, old_pos.col };
-				okay_placement = okay_placement && !board_->get_tile(one_tile_away);  // Both tiles clear
+				Tile one_tile_away = Tile{ (old_pos.row + new_pos.row) / 2, old_pos.col };
+				// Both tiles clear
+				okay_placement = okay_placement && !board_->get_tile(one_tile_away);
 			}
 		}
 		else {
 			// Otherwise, check if pawn is capturing an enemy piece
-			Pawn *temp_pawn = static_cast<Pawn *>(cur_piece);
+			const Pawn *temp_pawn = static_cast<const Pawn *>(cur_piece);
 			okay_placement = temp_pawn->valid_capture(new_pos) &&
 				target_tile && target_tile->get_player() != turn_;
 		}
@@ -144,7 +195,7 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 	case 'B': case 'R': case 'Q': {
 		if (okay_placement) {
 			// Check for any pieces between linear piece and target tile
-			LinearPiece *temp_linear_piece = static_cast<LinearPiece *>(cur_piece);
+			const LinearPiece *temp_linear_piece = static_cast<const LinearPiece *>(cur_piece);
 			Direction move_direction = temp_linear_piece->get_direction(new_pos);
 			okay_placement = !collision(old_pos, new_pos, move_direction);
 		}
@@ -152,8 +203,8 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 	}
 	case 'K': {
 		if (!okay_placement) {
-			King *temp_king = static_cast<King *>(cur_piece);
-			okay_placement = valid_castle(old_pos);
+			const King *temp_king = static_cast<const King *>(cur_piece);
+			okay_placement = valid_castle(temp_king, new_pos);
 		}
 		break;
 	}
