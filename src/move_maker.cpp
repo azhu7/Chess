@@ -32,7 +32,7 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 	cur_piece->set_pos(new_pos);  // Update piece coordinates
 	if (cur_piece->get_type() == 'K') {
 		King *temp_king = static_cast<King *>(cur_piece);
-		temp_king->set_moved(true);  // King has moved (can no longer castle)
+		temp_king->set_moved();  // King has moved (can no longer castle)
 		update_king_pos(cur_piece);
 	}
 	board_->move(old_pos, new_pos);  // Move piece

@@ -2,7 +2,7 @@
 *  Author: Alexander Zhu
 *  Date Created: November 20, 2016
 *  Description: Driver class for Chess game
-*  Version: 1.4
+*  Version: 1.5
 *
 *  TODO:
 *    Player name for moves
