@@ -5,7 +5,7 @@
 # Alexander Zhu <alexzhu@umich.edu>
 # December 26, 2016
 #
-# run "make help" for usage notes
+# Run "make help" for usage notes
 
 CC = g++-4.9
 CXXFLAGS = -std=c++11 -Wall -Werror -pedantic

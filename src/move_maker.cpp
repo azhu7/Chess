@@ -30,6 +30,11 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 		target_tile = nullptr;
 	}
 	cur_piece->set_pos(new_pos);  // Update piece coordinates
+	if (cur_piece->get_type() == 'K') {
+		King *temp_king = static_cast<King *>(cur_piece);
+		temp_king->set_moved(true);  // King has moved (can no longer castle)
+		update_king_pos(cur_piece);
+	}
 	board_->move(old_pos, new_pos);  // Move piece
 	assert(!board_->get_tile(old_pos));  // Old tile should contain nullptr
 	switch_turns();  // Switch turns upon successful move
@@ -76,6 +81,12 @@ bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
 		current_tile.row += vert_mvmt;
 		current_tile.col += horiz_mvmt;
 	}
+	return false;
+}
+
+bool MoveMaker::valid_castle(const Tile & cur_pos) const
+{
+	std::cout << "Unimplemented\n";
 	return false;
 }
 
@@ -140,7 +151,18 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		break;
 	}
 	case 'K': {
-		// Check castle, update King position
+		if (!okay_placement) {
+			King *temp_king = static_cast<King *>(cur_piece);
+			okay_placement = valid_castle(old_pos);
+		}
+		break;
+	}
+	case 'N': {
+		// No special case for Knights
+		break;
+	}
+	default: {
+		break;
 	}
 	}
 	// TODO: Checks on own piece = invalid; checks on enemy piece = update checked_

@@ -12,10 +12,11 @@
 #include "player.h"
 #include "linear_piece.h"
 
+// REQUIRES User must initialize MoveMaker with a Board object
 class MoveMaker {
 public:
 	explicit MoveMaker(Board *board);
-	~MoveMaker() {};
+	~MoveMaker() {}
 
 	// EFFECTS  Return current player
 	const Player &get_current_player() const { return turn_; }
@@ -24,6 +25,10 @@ public:
 	// EFFECTS  Move piece to new tile
 	// TODO		Update to return different enum codes
 	bool make_move(const Tile &old_pos, const Tile &new_pos);
+
+	void print_board() const {
+		std::cout << *board_;
+	}
 
 private:
 	typedef LinearPiece::Direction Direction;  // TODO: Questionable Style?
@@ -41,6 +46,18 @@ private:
 	// EFFECTS  Check for any pieces between old_pos and new_pos
 	bool collision(const Tile &old_pos, const Tile &new_pos, 
 		const Direction &direction) const;
+
+	// REQUIRES king is a King piece
+	// MODIFIES p1_king or p2_king depending on which player king belongs to
+	// EFFECTS  Update the king's position as tracked by MoveMaker
+	void update_king_pos(const Piece *king) {
+		if (king->get_player() == Player::WHITE)
+			p1_king = std::move(king->get_pos());
+		else
+			p2_king = std::move(king->get_pos());
+	}
+
+	bool valid_castle(const Tile &cur_pos) const;
 
 	// EFFECTS  Determine if piece can be moved to new tile.
 	//			Make sure piece moves according to Chess rules.

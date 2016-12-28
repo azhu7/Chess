@@ -23,6 +23,7 @@
 #include <string>
 #include <limits>
 #include <ios>
+#include <vector>
 
 using namespace std;
 
@@ -36,14 +37,20 @@ void print_quit();
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
 int parse_col_label(const char col_label);
 
+string derp() {
+	string a{ "hello" };
+	return std::move(a);
+}
+
 int main(int argc, char *argv[]) {
-	Board board;
-	MoveMaker move_maker{ &board };
+	cout << derp();
+	Board b;
+	MoveMaker move_maker{ &b };
 	regex move{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
 	print_intro();
 
 	while (true) {
-		cout << board;
+		move_maker.print_board();
 		Tile old_pos, new_pos;
 		bool valid_move = false;
 		while (!valid_move) {
@@ -81,9 +88,9 @@ void print_intro() {
 	if (cin >> option && option == 'y') {
 		print_instructions();
 	}
+	// Ignore any extra input
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	cin.clear();
-
 	cout << "Let's get started!\n\n";
 }
 

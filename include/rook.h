@@ -16,18 +16,23 @@ public:
 	~Rook() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'R'; }
+	char get_type() const override { return 'R'; }
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &new_pos) const {
+	bool valid_placement(const Tile &new_pos) const override {
 		const Tile cur_pos = get_pos();
-		return horizontal_path(cur_pos, new_pos) || vertical_path(cur_pos, new_pos);
+		return (horizontal_path(cur_pos, new_pos) || vertical_path(cur_pos, new_pos)) &&
+			cur_pos != new_pos;
 	}
 
 	// Inherited from LinearPiece class
-	Direction get_direction(const Tile &new_pos) const {
-		std::cout << "Unimplemented\n";
-		return Direction::E;
+	Direction get_direction(const Tile &new_pos) const override {
+		// Move horizontally
+		if (new_pos.row == get_row()) {
+			return new_pos.col > get_col() ? Direction::E : Direction::W;
+		}
+		// Move vertically
+		return new_pos.row > get_row() ? Direction::N : Direction::S;
 	}
 };
 

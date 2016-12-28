@@ -7,3 +7,6 @@
 /Chess.vcxproj
 /Chess.vcxproj.filters
 /Chess.vcxproj.user
+/.d
+/.obj
+/bin

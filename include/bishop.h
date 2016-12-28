@@ -16,17 +16,21 @@ public:
 	~Bishop() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'B'; };
+	char get_type() const override { return 'B'; };
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &new_pos) const {
-		return diagonal_path(get_pos(), new_pos);
+	bool valid_placement(const Tile &new_pos) const override {
+		return diagonal_path(get_pos(), new_pos) && get_pos() != new_pos;
 	}
 
 	// Inherited from LinearPiece class
-	Direction get_direction(const Tile &new_pos) const {
-		std::cout << "Unimplemented!!\n";
-		return Direction::E;
+	Direction get_direction(const Tile &new_pos) const override {
+		// Move upwards (N)
+		if (new_pos.row > get_row()) {
+			return new_pos.col > get_col() ? Direction::NE : Direction::NW;
+		}
+		// Move downwards (S)
+		return new_pos.col > get_col() ? Direction::SE : Direction::SW;
 	}
 };
 

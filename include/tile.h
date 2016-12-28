@@ -24,7 +24,7 @@ struct Tile {
 	}
 	~Tile() {}
 
-	bool operator!=(const Tile &other) {
+	bool operator!=(const Tile &other) const {
 		return row != other.row || col != other.col;
 	}
 	int row;

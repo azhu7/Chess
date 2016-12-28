@@ -12,11 +12,7 @@
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
 Board::Board() {
-	// Create 8x8 array of nullptrs
-	/*board_ = new Piece**[kNumRows];
-	for (int i = 0; i < kNumCols; ++i) {
-		board_[i] = new Piece*[kNumCols] {nullptr};
-	}*/
+	// Initialize 8x8 array of nullptrs
 	for (int i = 0; i < kNumRows; ++i) {
 		for (int j = 0; j < kNumCols; ++j) {
 			board_[i][j] = nullptr;
@@ -28,12 +24,18 @@ Board::Board() {
 }
 
 Board::~Board() {
-	for (int row = 0; row < kNumRows; ++row) {
+	for (auto &row : board_) {
+		for (auto piece : row) {
+			delete piece;
+			piece = nullptr;
+		}
+	}
+	/*for (int row = 0; row < kNumRows; ++row) {
 		for (int col = 0; col < kNumCols; ++col) {
 			delete board_[row][col];
 			board_[row][col] = nullptr;
 		}
-	}
+	}*/
 	/*for (int row = 0; row < kNumRows; ++row) {
 		// Delete all pieces in column
 		for (int col = 0; col < kNumCols; ++col) {

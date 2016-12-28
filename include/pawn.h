@@ -21,14 +21,14 @@ public:
 	~Pawn() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'P'; };
+	char get_type() const override { return 'P'; };
 
 	// REQUIRES (new_col, new_row) tile contains enemy piece, or en passant
 	// EFFECTS  Determine if capture is valid
 	bool valid_capture(const Tile &new_pos) const;
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &new_pos) const;
+	bool valid_placement(const Tile &new_pos) const override;
 };
 
 #endif  // PAWN_H

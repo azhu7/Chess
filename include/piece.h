@@ -16,8 +16,8 @@ class Piece {
 public:
 	explicit Piece(const Player color = Player::WHITE, const Tile &pos = Tile())
 		: color_{ color }, row_{ pos.row }, col_{ pos.col } {}
-	Piece(const Piece &other);  // TODO  Remove copy ctor and assignment operator b/c don't need?
-	Piece &operator=(const Piece &other);
+	Piece(const Piece &other) =delete;
+	Piece &operator=(const Piece &other) =delete;
 
 	virtual ~Piece() {}
 
@@ -27,6 +27,7 @@ public:
 
 	int get_col() const { return col_; }
 
+	// EFFECTS  Returns piece position as Tile. Useful for passing into functions.
 	const Tile get_pos() const { return Tile{ row_, col_ }; }
 
 	void set_pos(const Tile &pos) {
@@ -39,7 +40,8 @@ public:
 
 	// REQUIRES pos is a valid coordinate
 	// EFFECTS  Determine if piece is physically allowed to move to new position.
-	//          Does not take into account other pieces at that position.
+	//          Does not take into account other pieces at that position or along
+	//			the way.
 	virtual bool valid_placement(const Tile &new_pos) const = 0;
 
 	friend std::ostream &operator<<(std::ostream &os, const Piece *p) {

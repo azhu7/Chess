@@ -16,19 +16,34 @@ public:
 	~Queen() {}
 
 	// Inherited from Piece base class
-	char get_type() const { return 'Q'; }
+	char get_type() const override { return 'Q'; }
 
 	// Inherited from Piece base class
-	bool valid_placement(const Tile &new_pos) const {
+	bool valid_placement(const Tile &new_pos) const override {
 		const Tile cur_pos = get_pos();
-		return diagonal_path(cur_pos, new_pos) || horizontal_path(cur_pos, new_pos) ||
-			vertical_path(cur_pos, new_pos);
+		return (diagonal_path(cur_pos, new_pos) || horizontal_path(cur_pos, new_pos) ||
+			vertical_path(cur_pos, new_pos)) && cur_pos != new_pos;
 	}
 
 	// Inherited from LinearPiece class
-	Direction get_direction(const Tile &new_pos) const {
-		std::cout << "Unimplemented\n";
-		return Direction::E;
+	Direction get_direction(const Tile &new_pos) const override {
+		const Tile cur_pos = get_pos();
+		// Move upwards (N)
+		if (new_pos.row > cur_pos.row) {
+			if (new_pos.col > cur_pos.col) {
+				return Direction::NE;
+			}
+			return new_pos.col < cur_pos.col ? Direction::NW : Direction::N;
+		}
+		// Move horizontally
+		if (new_pos.row == cur_pos.row) {
+			return new_pos.col < cur_pos.col ? Direction::W : Direction::E;
+		}
+		// Move downwards (S)
+		if (new_pos.col > cur_pos.col) {
+			return Direction::SE;
+		}
+		return new_pos.col < cur_pos.col ? Direction::SW : Direction::S;
 	}
 };
 
