@@ -13,10 +13,13 @@
 #include "king.h"
 #include "linear_piece.h"
 
-// REQUIRES User must initialize MoveMaker with a Board object
+// REQUIRES User must initialize MoveMaker with a Board object. This way, the
+//			user can load different piece layouts.
+// EXAMPLE  Board board;
+//			MoveMaker move_maker{ board };
 class MoveMaker {
 public:
-	explicit MoveMaker(Board *board);
+	explicit MoveMaker(Board &board);
 	~MoveMaker() {}
 
 	// EFFECTS  Return current player
@@ -32,7 +35,7 @@ public:
 	}
 
 private:
-	typedef LinearPiece::Direction Direction;  // TODO: Questionable Style?
+	typedef LinearPiece::Direction Direction;  // TODO: Okay style?
 	Board *board_;
 	Tile p1_king;  // Track each player's king to help with check detection
 	Tile p2_king;
@@ -40,7 +43,7 @@ private:
 	Player checked_;  // Player whose King is under attack
 
 	// MODIFIES turn_
-	// EFFECTS  Updates whose turn it is
+	// EFFECTS  Updates whose turn it is. Called by make_move()
 	void switch_turns() {
 		turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
 	}

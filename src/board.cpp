@@ -9,16 +9,25 @@
 #include <iostream>
 #include <cassert>
 
+
+
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
+Board::Board(std::istream &os)
+{
+	// Fill board_ with nullptr
+	init_board();
+
+	// Read in piece layout from input stream
+	os >> board_;
+}
+
 Board::Board() {
-	// Initialize 8x8 array of nullptrs
-	for (int i = 0; i < kNumRows; ++i) {
-		for (int j = 0; j < kNumCols; ++j) {
-			board_[i][j] = nullptr;
-		}
-	}
-	// Place all pieces onto board
+	// Fill board_ with nullptr
+	init_board();
+
+	// Place all pieces onto board. Dynamic pieces will be deallocated as they are
+	// captures and remaining pieces deallocated by destructor.
 	place_pawns();
 	place_pieces();
 }
@@ -30,25 +39,6 @@ Board::~Board() {
 			piece = nullptr;
 		}
 	}
-	/*for (int row = 0; row < kNumRows; ++row) {
-		for (int col = 0; col < kNumCols; ++col) {
-			delete board_[row][col];
-			board_[row][col] = nullptr;
-		}
-	}*/
-	/*for (int row = 0; row < kNumRows; ++row) {
-		// Delete all pieces in column
-		for (int col = 0; col < kNumCols; ++col) {
-			delete board_[row][col];
-			board_[row][col] = nullptr;
-		}
-		// Delete column
-		delete board_[row];
-		board_[row] = nullptr;
-	}
-	// Delete rows
-	delete board_;
-	board_ = nullptr;*/
 }
 
 // EFFECTS  Helper function for printing out column labels
@@ -85,7 +75,20 @@ std::ostream &operator<<(std::ostream &os, const Board &board) {
 	return os;
 }
 
+void operator>>(std::istream &is, Piece *[kNumRows][kNumCols]) {
+	std::cout << "Unimplemented!\n";
+}
+
 ////////// BEGIN PRIVATE FUNCTIONS //////////
+
+void Board::init_board() {
+	// Initialize 8x8 array of nullptrs
+	for (int i = 0; i < kNumRows; ++i) {
+		for (int j = 0; j < kNumCols; ++j) {
+			board_[i][j] = nullptr;
+		}
+	}
+}
 
 inline Piece *Board::piece_factory(const Player color, const Tile &pos,
 	const char type) const {

@@ -10,8 +10,8 @@ static const Tile P2_KING_START = Tile{ 7, 4 };
 
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
-MoveMaker::MoveMaker(Board *board)
-	: board_{ board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START },
+MoveMaker::MoveMaker(Board &board)
+	: board_{ &board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START },
 	turn_ { Player::WHITE } {}
 
 bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {

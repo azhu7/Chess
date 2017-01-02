@@ -25,7 +25,8 @@ public:
 	static const int kKingLeftCastledCol = 2;
 	static const int kKingRightCastledCol = 6;
 
-	Board();
+	explicit Board(std::istream &os);
+	explicit Board();
 	~Board();
 
 	// REQUIRES pos is valid tile
@@ -74,8 +75,19 @@ public:
 	// TODO		This doesn't need to be a friend function...but should it be?
 	friend std::ostream &operator<<(std::ostream &os, const Board &board);
 
+	// MODIFIES board_
+	// EFFECTS  Reads in, allocates, and places pieces on board_. Tiles read in
+	//			from A8 to H8, A7 to H7, ..., A0 to H0.
+	//				"1P" places a white Pawn at the current tile
+	//				"--" indicates an empty tile
+	friend void operator>>(std::istream &is, Piece *board[kNumRows][kNumCols]);
+
 private:
 	Piece *board_[kNumRows][kNumCols];  // 8x8 board of pointers to pieces
+
+	// MODIFIES board_
+	// EFFECTS  Fills board_ with nullptr
+	void init_board();
 
 	// EFFECTS  Generate a dynamically allocated Piece object
 	Piece *piece_factory(const Player color, const Tile &pos,

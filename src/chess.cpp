@@ -5,11 +5,9 @@
 *  Version: 1.5
 *
 *  TODO:
-*    Player name for moves
-*	 Verbose output detailing moves
+*	 Verbose output detailing move outcomes
 *	 Save feature? Write moves to log for future replay
-*	 How to check for correct test output state?
-*	 Remove Board object from main altogether? (only keep MoveMaker?)
+*	 How to check for correct test output state? Read in board state and check for equality? (overload == for board AND piece)
 *	 Stats feature. type stats to see some stats like #moves, pieces captured
 *	 Detect check, checkmate, get out of check, stalemate (may need hash for pieces)
 */
@@ -37,15 +35,9 @@ void print_quit();
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
 int parse_col_label(const char col_label);
 
-string derp() {
-	string a{ "hello" };
-	return std::move(a);
-}
-
 int main(int argc, char *argv[]) {
-	cout << derp();
-	Board b;
-	MoveMaker move_maker{ &b };
+	Board board;
+	MoveMaker move_maker{ board };
 	regex move{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
 	print_intro();
 
