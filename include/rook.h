@@ -21,7 +21,7 @@ public:
 	void set_moved() { has_moved_ = true; }
 
 	// Inherited from Piece base class
-	char get_type() const override { return 'R'; }
+	PieceType get_type() const override { return PieceType::R; };
 
 	// Inherited from Piece base class
 	bool valid_placement(const Tile &new_pos) const override {

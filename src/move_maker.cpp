@@ -1,39 +1,51 @@
 #include "../include/move_maker.h"
+#include "../include/board.h"
 #include "../include/pawn.h"
 #include "../include/bishop.h"
 #include "../include/knight.h"
 #include "../include/rook.h"
 #include "../include/queen.h"
 
-static const Tile P1_KING_START = Tile{ 0, 4 };
-static const Tile P2_KING_START = Tile{ 7, 4 };
+using PieceType = Piece::PieceType;
+typedef LinearPiece::Direction Direction;  // TODO: Okay style?
+
+static const Tile P1_KING_START{ 0, 4 };
+static const Tile P2_KING_START{ 7, 4 };
 
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
-MoveMaker::MoveMaker(Board &board)
-	: board_{ &board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START },
+MoveMaker::MoveMaker(Board *board)
+	: board_{ board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START },
 	turn_ { Player::WHITE } {}
 
 bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 	if (!valid_move(old_pos, new_pos)) {
 		std::cout << ">>> Invalid move. Try again! <<<\n";
-		return false;  // Unsuccessful move
+		return false;
 	}
-	Piece *cur_piece = (*board_)[old_pos];
-	const Piece *target_tile = board_->get_tile(new_pos);
-	if (target_tile) {
+	Piece *cur_piece = board_->get_tile(old_pos);
+	if (const Piece *target_tile = board_->get_tile(new_pos)) {
 		// Capture enemy piece
 		assert(target_tile->get_player() != turn_);  // Make sure enemy piece
 		delete target_tile;
 		target_tile = nullptr;
 	}
+
+	PieceType cur_type = cur_piece->get_type();
+	// Pawn special case
+	if (cur_type == PieceType::P) {
+		Pawn *temp_pawn = static_cast<Pawn *>(cur_piece);
+		// Check if pawn is moving two tiles. Needed for possible en passant.
+		bool two_tile_move = abs(new_pos.row - old_pos.row) == 2;
+		temp_pawn->set_two_tile_move(two_tile_move);
+	}
 	// Rook special case
-	if (cur_piece->get_type() == 'R') {
+	else if (cur_type == PieceType::R) {
 		Rook *temp_rook = static_cast<Rook *>(cur_piece);
 		temp_rook->set_moved();  // Rook has moved (can no longer castle on this side)
 	}
 	// King special case
-	else if (cur_piece->get_type() == 'K') {
+	else if (cur_type == PieceType::K) {
 		King *temp_king = static_cast<King *>(cur_piece);
 		if (valid_castle(temp_king, new_pos)) {
 			// On castle, update rook as well
@@ -47,6 +59,10 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 	assert(!board_->get_tile(old_pos));  // Old tile should contain nullptr
 	switch_turns();  // Switch turns upon successful move
 	return true;
+}
+
+void MoveMaker::print_board() const {
+	std::cout << *board_;
 }
 
 ////////// BEGIN PRIVATE FUNCTIONS //////////
@@ -94,7 +110,7 @@ void MoveMaker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
 		const int castled_col) {
 		const Tile rook_pos{ old_pos.row, rook_col };
 		const Tile castled_pos{ old_pos.row, castled_col };
-		Rook *temp_rook = static_cast<Rook *>((*board_)[rook_pos]);
+		Rook *temp_rook = static_cast<Rook *>(board_->get_tile(rook_pos));
 		board_->move(rook_pos, castled_pos);
 		temp_rook->set_moved();
 	};
@@ -119,9 +135,9 @@ bool MoveMaker::valid_castle(const King *king, const Tile &new_pos) const {
 	static auto rook_and_collision_check = [&](const Tile &cur_pos, const int rook_col, 
 		const Direction direction) {
 		// Check corner for rook
-		const Tile rook_tile = Tile{ cur_pos.row, rook_col };
-		const Piece *temp_piece = (*board_)[rook_tile];
-		if (temp_piece->get_type() == 'R') {
+		const Tile rook_tile{ cur_pos.row, rook_col };
+		const Piece *temp_piece = board_->get_tile(rook_tile);
+		if (temp_piece->get_type() == PieceType::R) {
 			const Rook *temp_rook = static_cast<const Rook *>(temp_piece);
 			// Check that rook has not moved and no horizontal collision to the right
 			return !(temp_rook->has_moved() || collision(cur_pos, rook_tile, direction));
@@ -170,16 +186,16 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 	// Okay physical placement
 	bool okay_placement = cur_piece->valid_placement(new_pos);
 	// Check unique cases
-	char piece_type = cur_piece->get_type();
+	PieceType piece_type = cur_piece->get_type();
 	switch (piece_type) {
-	case 'P': {
+	case PieceType::P: {
 		// Pawn capture different than move
 		const Piece *target_tile = board_->get_tile(new_pos);
 		if (okay_placement) {
 			okay_placement = !target_tile;  // If vertical move, make sure target spot is empty
 			if (abs(new_pos.row - old_pos.row) == 2) {
 				// Check tile one above/below pawn
-				Tile one_tile_away = Tile{ (old_pos.row + new_pos.row) / 2, old_pos.col };
+				Tile one_tile_away{ (old_pos.row + new_pos.row) / 2, old_pos.col };
 				// Both tiles clear
 				okay_placement = okay_placement && !board_->get_tile(one_tile_away);
 			}
@@ -187,12 +203,13 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		else {
 			// Otherwise, check if pawn is capturing an enemy piece
 			const Pawn *temp_pawn = static_cast<const Pawn *>(cur_piece);
-			okay_placement = temp_pawn->valid_capture(new_pos) &&
+			Tile en_passant_tile{ old_pos.row, new_pos.col };  // TODO: Check if this tile is correct
+			okay_placement = temp_pawn->valid_capture(new_pos, en_passant_tile) &&
 				target_tile && target_tile->get_player() != turn_;
 		}
 		break;
 	}
-	case 'B': case 'R': case 'Q': {
+	case PieceType::B: case PieceType::R: case PieceType::Q: {
 		if (okay_placement) {
 			// Check for any pieces between linear piece and target tile
 			const LinearPiece *temp_linear_piece = static_cast<const LinearPiece *>(cur_piece);
@@ -201,18 +218,15 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		}
 		break;
 	}
-	case 'K': {
+	case PieceType::K: {
 		if (!okay_placement) {
 			const King *temp_king = static_cast<const King *>(cur_piece);
 			okay_placement = valid_castle(temp_king, new_pos);
 		}
 		break;
 	}
-	case 'N': {
+	case PieceType::N: {
 		// No special case for Knights
-		break;
-	}
-	default: {
 		break;
 	}
 	}

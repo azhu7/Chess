@@ -16,8 +16,10 @@ class Piece {
 public:
 	explicit Piece(const Player color = Player::WHITE, const Tile &pos = Tile())
 		: color_{ color }, row_{ pos.row }, col_{ pos.col } {}
-	Piece(const Piece &other) =delete;
-	Piece &operator=(const Piece &other) =delete;
+	Piece(const Piece &other) = delete; 
+	Piece(const Piece &&other) = delete;
+	const Piece &operator=(const Piece &other) = delete;
+	Piece &operator=(Piece &&other) = delete;
 
 	virtual ~Piece() {}
 
@@ -35,8 +37,17 @@ public:
 		col_ = pos.col;
 	}
 
-	// EFFECTS  Return piece type as char ('P' = Pawn, 'R' = Rook, etc.)
-	virtual char get_type() const = 0;
+	enum class PieceType : char {
+		P = 'P', B = 'B', N = 'N', R = 'R', Q = 'Q', K = 'K'
+	};
+
+	friend std::ostream &operator<<(std::ostream &os, const PieceType pt) {
+		os << static_cast<std::underlying_type<PieceType>::type>(pt);
+		return os;
+	}
+
+	// EFFECTS  Return piece type
+	virtual PieceType get_type() const = 0;
 
 	// REQUIRES pos is a valid coordinate
 	// EFFECTS  Determine if piece is physically allowed to move to new position.

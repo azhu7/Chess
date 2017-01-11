@@ -7,7 +7,12 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "piece.h"
+#include "player.h"
+#include "tile.h"
+#include <cassert>
+#include <istream>
+
+class Piece;
 
 static const int kNumRows = 8;  // TODO: Want to define in cpp, but board_ needs here
 static const int kNumCols = 8;
@@ -25,49 +30,48 @@ public:
 	static const int kKingLeftCastledCol = 2;
 	static const int kKingRightCastledCol = 6;
 
-	explicit Board(std::istream &os);
+	explicit Board(std::istream &is);
 	explicit Board();
+	Board(const Board &other) = delete;
+	Board(Board &&other) = delete;
+	const Board &operator=(const Board &other) = delete;
+	Board &operator=(Board &&other) = delete;
+
 	~Board();
 
 	// REQUIRES pos is valid tile
 	// EFFECTS  Return const Piece pointer at specified tile
 	const Piece *get_tile(const Tile &pos) const {
-		assert(pos.col >= 0 && pos.col < kNumCols);
-		assert(pos.row >= 0 && pos.row < kNumRows);
+		assert(tile_in_bounds(pos));
 		return board_[pos.row][pos.col];
 	}
-
-	/*// REQUIRES pos is valid tile
-	// EFFECTS  Return Piece pointer at specified tile
-	Piece *get_tile(const Tile &pos) {
-		//return const_cast<Piece *>(static_cast<const Board *>(this)->get_tile(pos));
-		return board_[pos.row][pos.col];
-	}*/
 
 	// REQUIRES pos is valid tile
 	// EFFECTS  Return reference to Piece pointer at specified tile
-	Piece *&operator[](const Tile &pos) {
-		assert(pos.col >= 0 && pos.col < kNumCols);
-		assert(pos.row >= 0 && pos.row < kNumRows);
+	Piece *&get_tile(const Tile &pos) {
+		assert(tile_in_bounds(pos));
 		return board_[pos.row][pos.col];
 	}
 
-	// MODIFIES board_
-	// EFFECTS  Places piece on board_ at specified tile
-	void set_tile(const Tile &pos, Piece *piece) {
-		board_[pos.row][pos.col] = piece;
-	}
+	// REQUIRES pos is valid tile
+	// EFFECTS  Return reference to Piece pointer at specified tile
+	/*Piece *&operator[](const Tile &pos) {
+		assert(pos.col >= 0 && pos.col < kNumCols);
+		assert(pos.row >= 0 && pos.row < kNumRows);
+		return board_[pos.row][pos.col];
+	}*/
 
-	// EFFECTS  Determine if tile coordinates are valid
+	// EFFECTS  Determine if tile is valid
 	bool tile_in_bounds(const Tile &pos) const {
 		return pos.col >= 0 && (pos.col < kNumCols) &&
 			(pos.row >= 0) && (pos.row < kNumRows);
 	}
 
+	// REQUIRES old_pos and new_pos are valid tiles
 	// MODIFIES board_
 	// EFFECTS  Move piece to new tile
 	void move(const Tile &old_pos, const Tile &new_pos) {
-		set_tile(new_pos, (*this)[old_pos]);  // Move piece
+		set_tile(new_pos, get_tile(old_pos));  // Move piece
 		set_tile(old_pos, nullptr);  // old_pos is empty now
 	}
 
@@ -75,12 +79,14 @@ public:
 	// TODO		This doesn't need to be a friend function...but should it be?
 	friend std::ostream &operator<<(std::ostream &os, const Board &board);
 
+	// REQUIRES Valid initializing string format
 	// MODIFIES board_
 	// EFFECTS  Reads in, allocates, and places pieces on board_. Tiles read in
 	//			from A8 to H8, A7 to H7, ..., A0 to H0.
 	//				"1P" places a white Pawn at the current tile
 	//				"--" indicates an empty tile
-	friend void operator>>(std::istream &is, Piece *board[kNumRows][kNumCols]);
+	template <size_t rows, size_t cols>
+	friend std::istream &operator>>(std::istream &is, Piece *(&board)[rows][cols]);
 
 private:
 	Piece *board_[kNumRows][kNumCols];  // 8x8 board of pointers to pieces
@@ -88,6 +94,10 @@ private:
 	// MODIFIES board_
 	// EFFECTS  Fills board_ with nullptr
 	void init_board();
+
+	// MODIFIES board_
+	// EFFECTS  Places piece on board_ at specified tile
+	void set_tile(const Tile &pos, Piece *piece) { get_tile(pos) = piece; }
 
 	// EFFECTS  Generate a dynamically allocated Piece object
 	Piece *piece_factory(const Player color, const Tile &pos,

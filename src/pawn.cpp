@@ -1,6 +1,6 @@
 #include "../include/pawn.h"
 
-bool Pawn::valid_capture(const Tile &new_pos) const {
+bool Pawn::valid_capture(const Tile &new_pos, const Tile &en_passant_pos) const {
 	std::cout << "TODO: account for en passant\n";
 	const int row_diff = new_pos.row - get_row();
 	const int col_abs_diff = abs(new_pos.col - get_col());

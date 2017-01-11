@@ -16,7 +16,7 @@ public:
 	~Knight() {}
 
 	// Inherited from Piece base class
-	char get_type() const override { return 'N'; }
+	PieceType get_type() const override { return PieceType::N; };
 
 	// Inherited from Piece base class
 	bool valid_placement(const Tile &new_pos) const override {

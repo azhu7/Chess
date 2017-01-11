@@ -8,10 +8,12 @@
 #ifndef MOVE_MAKER_H
 #define MOVE_MAKER_H
 
-#include "board.h"
+//#include "board.h"
 #include "player.h"
 #include "king.h"
 #include "linear_piece.h"
+
+class Board;
 
 // REQUIRES User must initialize MoveMaker with a Board object. This way, the
 //			user can load different piece layouts.
@@ -19,23 +21,21 @@
 //			MoveMaker move_maker{ board };
 class MoveMaker {
 public:
-	explicit MoveMaker(Board &board);
+	explicit MoveMaker(Board *board);
 	~MoveMaker() {}
 
 	// EFFECTS  Return current player
 	const Player &get_current_player() const { return turn_; }
 
 	// MODIFIES board_
-	// EFFECTS  Move piece to new tile
+	// EFFECTS  Move piece to new tile if valid move, otherwise return false
 	// TODO		Update to return different enum codes
 	bool make_move(const Tile &old_pos, const Tile &new_pos);
 
-	void print_board() const {
-		std::cout << *board_;
-	}
+	void print_board() const;
 
 private:
-	typedef LinearPiece::Direction Direction;  // TODO: Okay style?
+	using Direction = LinearPiece::Direction;
 	Board *board_;
 	Tile p1_king;  // Track each player's king to help with check detection
 	Tile p2_king;

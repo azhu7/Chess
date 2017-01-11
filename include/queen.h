@@ -16,7 +16,7 @@ public:
 	~Queen() {}
 
 	// Inherited from Piece base class
-	char get_type() const override { return 'Q'; }
+	PieceType get_type() const override { return PieceType::Q; };
 
 	// Inherited from Piece base class
 	bool valid_placement(const Tile &new_pos) const override {

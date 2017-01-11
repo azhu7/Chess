@@ -1,5 +1,5 @@
 #include "../include/board.h"
-#include "../include/player.h"
+#include "../include/piece.h"
 #include "../include/pawn.h"
 #include "../include/bishop.h"
 #include "../include/knight.h"
@@ -9,17 +9,15 @@
 #include <iostream>
 #include <cassert>
 
-
-
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
-Board::Board(std::istream &os)
+Board::Board(std::istream &is)
 {
 	// Fill board_ with nullptr
 	init_board();
 
 	// Read in piece layout from input stream
-	os >> board_;
+	is >> board_;
 }
 
 Board::Board() {
@@ -75,8 +73,10 @@ std::ostream &operator<<(std::ostream &os, const Board &board) {
 	return os;
 }
 
-void operator>>(std::istream &is, Piece *[kNumRows][kNumCols]) {
+template <size_t rows, size_t cols>
+std::istream &operator>>(std::istream &is, Piece *(&board)[rows][cols]) {
 	std::cout << "Unimplemented!\n";
+	return is;
 }
 
 ////////// BEGIN PRIVATE FUNCTIONS //////////

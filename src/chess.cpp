@@ -37,7 +37,7 @@ int parse_col_label(const char col_label);
 
 int main(int argc, char *argv[]) {
 	Board board;
-	MoveMaker move_maker{ board };
+	MoveMaker move_maker{ &board };
 	regex move{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
 	print_intro();
 
@@ -74,9 +74,9 @@ int main(int argc, char *argv[]) {
 
 void print_intro() {
 	void print_instructions();
-	char option = 0;
 	cout << "Hello! Welcome to chess.\n";
 	cout << "Would you like to see the instructions? (y/n): ";
+	char option = 0;
 	if (cin >> option && option == 'y') {
 		print_instructions();
 	}
@@ -103,7 +103,7 @@ void print_prompt(const MoveMaker &move_maker) {
 
 void print_quit() {
 	cout << "Thanks for playing!\n";
-	cout << "Your game log has been saved to: _____\n";
+	//cout << "Your game log has been saved to: _____\n";
 }
 
 ////////// BEGIN PARSE FUNCTIONS //////////
