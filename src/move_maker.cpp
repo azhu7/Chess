@@ -7,7 +7,6 @@
 #include "../include/queen.h"
 
 using PieceType = Piece::PieceType;
-typedef LinearPiece::Direction Direction;  // TODO: Okay style?
 
 static const Tile P1_KING_START{ 0, 4 };
 static const Tile P2_KING_START{ 7, 4 };
@@ -16,36 +15,41 @@ static const Tile P2_KING_START{ 7, 4 };
 
 MoveMaker::MoveMaker(Board *board)
 	: board_{ board }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START },
-	turn_ { Player::WHITE } {}
+	last_en_passant_pos{ Tile{} }, turn_{ Player::WHITE }, en_passant{ false } {}
 
 bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 	if (!valid_move(old_pos, new_pos)) {
 		std::cout << ">>> Invalid move. Try again! <<<\n";
 		return false;
 	}
+
 	Piece *cur_piece = board_->get_tile(old_pos);
-	if (const Piece *target_tile = board_->get_tile(new_pos)) {
+	if (Piece *&target_tile = board_->get_tile(new_pos)) {
 		// Capture enemy piece
 		assert(target_tile->get_player() != turn_);  // Make sure enemy piece
 		delete target_tile;
 		target_tile = nullptr;
 	}
 
-	PieceType cur_type = cur_piece->get_type();
-	// Pawn special case
-	if (cur_type == PieceType::P) {
-		Pawn *temp_pawn = static_cast<Pawn *>(cur_piece);
+	// Account for en passant capture
+	if (en_passant)
+		capture_en_passant_pawn();
+	last_en_passant_pos = Tile{};  // Reset en passant tile
+
+	switch (cur_piece->get_type()) {
+	case PieceType::P: {
 		// Check if pawn is moving two tiles. Needed for possible en passant.
-		bool two_tile_move = abs(new_pos.row - old_pos.row) == 2;
-		temp_pawn->set_two_tile_move(two_tile_move);
+		bool two_rank_move = abs(new_pos.row - old_pos.row) == 2 && new_pos.col == old_pos.col;
+		if (two_rank_move)
+			last_en_passant_pos = new_pos;
+		break;
 	}
-	// Rook special case
-	else if (cur_type == PieceType::R) {
+	case PieceType::R: {
 		Rook *temp_rook = static_cast<Rook *>(cur_piece);
 		temp_rook->set_moved();  // Rook has moved (can no longer castle on this side)
+		break;
 	}
-	// King special case
-	else if (cur_type == PieceType::K) {
+	case PieceType::K: {
 		King *temp_king = static_cast<King *>(cur_piece);
 		if (valid_castle(temp_king, new_pos)) {
 			// On castle, update rook as well
@@ -53,7 +57,14 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 		}
 		temp_king->set_moved();  // King has moved (can no longer castle)
 		set_king_pos(temp_king);
+		break;
 	}
+	case PieceType::B: case PieceType::N: case PieceType::Q:
+		// No special case for Bishops, Knights, and Queens
+		break;
+	}  // switch
+
+	en_passant = false;
 	cur_piece->set_pos(new_pos);  // Update piece coordinates
 	board_->move(old_pos, new_pos);  // Move piece
 	assert(!board_->get_tile(old_pos));  // Old tile should contain nullptr
@@ -61,11 +72,17 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
 	return true;
 }
 
-void MoveMaker::print_board() const {
-	std::cout << *board_;
+void MoveMaker::print_board(std::ostream &os) const {
+	os << *board_;
 }
 
 ////////// BEGIN PRIVATE FUNCTIONS //////////
+
+void MoveMaker::capture_en_passant_pawn() {
+	Piece *&target_tile = board_->get_tile(last_en_passant_pos);
+	delete target_tile;
+	target_tile = nullptr;
+}
 
 bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
 	const Direction &direction) const {
@@ -165,25 +182,24 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 
 	const Piece *cur_piece = board_->get_tile(old_pos);
 	const Piece *new_tile = board_->get_tile(new_pos);
-	if (!cur_piece) {
+	if (!cur_piece)
 		return false;  // Player selected empty tile
-	}
 
 	// Players move their own pieces
-	bool move_own_piece = cur_piece->get_player() == turn_;
-	// Can't move onto own piece
-	bool capture_own_piece = new_tile ? new_tile->get_player() == 
-		cur_piece->get_player() : false;
-	if (!move_own_piece) {
+	if (cur_piece->get_player() != turn_) {
 		std::cout << "Can't move enemy piece\n";
 		return false;
 	}
-	else if (capture_own_piece) {
+
+	// Can't move onto own piece
+	bool capture_own_piece = new_tile ? new_tile->get_player() ==
+		cur_piece->get_player() : false;
+	if (capture_own_piece) {
 		std::cout << "Can't capture own piece\n";
 		return false;
 	}
 
-	// Okay physical placement
+	// Check physical placement
 	bool okay_placement = cur_piece->valid_placement(new_pos);
 	// Check unique cases
 	PieceType piece_type = cur_piece->get_type();
@@ -203,9 +219,14 @@ bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
 		else {
 			// Otherwise, check if pawn is capturing an enemy piece
 			const Pawn *temp_pawn = static_cast<const Pawn *>(cur_piece);
-			Tile en_passant_tile{ old_pos.row, new_pos.col };  // TODO: Check if this tile is correct
-			okay_placement = temp_pawn->valid_capture(new_pos, en_passant_tile) &&
-				target_tile && target_tile->get_player() != turn_;
+			Tile en_passant_tile{ old_pos.row, new_pos.col };
+			bool possible_en_passant = last_en_passant_pos == en_passant_tile;
+			// Captured a piece if target tile contains enemy piece OR valid en passant
+			bool captured_a_piece = (target_tile && target_tile->get_player() != turn_) ||
+				possible_en_passant;
+			okay_placement = temp_pawn->valid_capture_placement(new_pos) &&
+				captured_a_piece;
+			en_passant = okay_placement && possible_en_passant;
 		}
 		break;
 	}

@@ -32,10 +32,10 @@ public:
 
 	explicit Board(std::istream &is);
 	explicit Board();
-	Board(const Board &other) = delete;
-	Board(Board &&other) = delete;
-	const Board &operator=(const Board &other) = delete;
-	Board &operator=(Board &&other) = delete;
+	Board(const Board &) = delete;
+	Board(Board &&) = delete;
+	const Board &operator=(const Board &) = delete;
+	Board &operator=(Board &&) = delete;
 
 	~Board();
 
@@ -52,14 +52,6 @@ public:
 		assert(tile_in_bounds(pos));
 		return board_[pos.row][pos.col];
 	}
-
-	// REQUIRES pos is valid tile
-	// EFFECTS  Return reference to Piece pointer at specified tile
-	/*Piece *&operator[](const Tile &pos) {
-		assert(pos.col >= 0 && pos.col < kNumCols);
-		assert(pos.row >= 0 && pos.row < kNumRows);
-		return board_[pos.row][pos.col];
-	}*/
 
 	// EFFECTS  Determine if tile is valid
 	bool tile_in_bounds(const Tile &pos) const {
@@ -86,7 +78,7 @@ public:
 	//				"1P" places a white Pawn at the current tile
 	//				"--" indicates an empty tile
 	template <size_t rows, size_t cols>
-	friend std::istream &operator>>(std::istream &is, Piece *(&board)[rows][cols]);
+	friend std::istream &operator>>(std::istream &, Piece *(&board)[rows][cols]);
 
 private:
 	Piece *board_[kNumRows][kNumCols];  // 8x8 board of pointers to pieces

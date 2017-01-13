@@ -17,6 +17,10 @@ struct Tile {
 	bool operator!=(const Tile &other) const {
 		return !(*this == other);
 	}
+	friend std::ostream &operator<<(std::ostream &os, const Tile &pos) {
+		os << (char)(pos.col + 'a') << pos.row + 1;
+		return os;
+	}
 	int row;
 	int col;
 };

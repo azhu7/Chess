@@ -17,7 +17,7 @@ public:
 	explicit Piece(const Player color = Player::WHITE, const Tile &pos = Tile())
 		: color_{ color }, row_{ pos.row }, col_{ pos.col } {}
 	Piece(const Piece &other) = delete; 
-	Piece(const Piece &&other) = delete;
+	Piece(Piece &&other) = delete;
 	const Piece &operator=(const Piece &other) = delete;
 	Piece &operator=(Piece &&other) = delete;
 

@@ -1,23 +1,23 @@
 #include "../include/pawn.h"
 
-bool Pawn::valid_capture(const Tile &new_pos, const Tile &en_passant_pos) const {
-	std::cout << "TODO: account for en passant\n";
+bool Pawn::valid_capture_placement(const Tile &new_pos) const {
 	const int row_diff = new_pos.row - get_row();
 	const int col_abs_diff = abs(new_pos.col - get_col());
 
-	// Valid if move left/right 1 column and move up/down 1 row
+	// Valid if move 1 tile diagonally
 	// White pawn must capture up one col. Black pawn capture down one col
-	return col_abs_diff == 1 && (get_player() == Player::WHITE ? row_diff == 1 : row_diff == -1);
+	return col_abs_diff == 1 && (get_player() == Player::WHITE ? row_diff == 1 : 
+		row_diff == -1);
 }
 
 bool Pawn::valid_placement(const Tile &new_pos) const {
 	const int row_diff = new_pos.row - get_row();
 	const int col_diff = new_pos.col - get_col();
 
-	// Pawns cannot move left/right except to capture (check w/ Pawn::valid_capture())
-	if (col_diff) {
+	// Pawns cannot move left/right except to capture
+	// (checked w/ Pawn::valid_capture_placement())
+	if (col_diff)
 		return false;
-	}
 
 	// Case 1: white pawn
 	if (get_player() == Player::WHITE) {

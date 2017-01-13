@@ -8,7 +8,6 @@
 #ifndef MOVE_MAKER_H
 #define MOVE_MAKER_H
 
-//#include "board.h"
 #include "player.h"
 #include "king.h"
 #include "linear_piece.h"
@@ -32,21 +31,30 @@ public:
 	// TODO		Update to return different enum codes
 	bool make_move(const Tile &old_pos, const Tile &new_pos);
 
-	void print_board() const;
+	void print_board(std::ostream &os = std::cout) const;
 
 private:
 	using Direction = LinearPiece::Direction;
 	Board *board_;
 	Tile p1_king;  // Track each player's king to help with check detection
 	Tile p2_king;
+	Tile last_en_passant_pos;  // Track tile of pawn that moved two ranks last move. 
+						 // {-1, -1} if none.
 	Player turn_;
-	Player checked_;  // Player whose King is under attack
+	mutable bool en_passant;  // True if current move is an en_passant. Used to
+							  // communicate between valid_move() and make_move()
+	//Player checked_;  // Player whose King is under attack
+						// Check detection not yet implemented
 
 	// MODIFIES turn_
 	// EFFECTS  Updates whose turn it is. Called by make_move()
 	void switch_turns() {
 		turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
 	}
+
+	// MODIFIES board_
+	// EFFECTS  Remove en passant pawn from board_
+	void capture_en_passant_pawn();
 
 	// REQUIRES Straight path from current pos to new_pos
 	// EFFECTS  Check for any pieces between old_pos and new_pos
@@ -64,7 +72,6 @@ private:
 		}
 	}
 
-	// REQUIRES Called upon a valid castle
 	// MODIFIES rook, board_
 	// EFFECTS  Moves rook to correct castle position. Called by make_move()
 	void castle_update_rook(const Tile &old_pos, const Tile &new_pos);

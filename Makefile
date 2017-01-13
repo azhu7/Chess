@@ -36,9 +36,13 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CXXFLAGS) -o $@ $^
 	@echo "Successfully built chess!"
 
-# Run target executable
-run: $(TARGET)
-	./$(TARGET)
+# Build release executable
+release: CXXFLAGS += -O3 -DNDEBUG
+release: $(TARGET)
+
+# Build debug executable
+debug: CSSFLAGS += -g3 -DDEBUG
+debug: clean $(TARGET)
 
 # Build and run test executable
 test: $(TEST_EXE)
@@ -64,7 +68,8 @@ define MAKEFILE_HELP
 Chess Makefile Usage
 Usage:
   "make" - build chess exe
-  "make run" - build and run chess exe
+  "make release" - build release chess exe
+  "make debug" - build debug chess exe
   "make test" - build and run test files
   "make clean" - delete executables and temporary files
 endef
