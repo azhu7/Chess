@@ -15,19 +15,19 @@ const int kBlackPawnStart = 6;
 
 class Pawn : public Piece {
 public:
-	explicit Pawn(const Player color = Player::WHITE, const Tile &pos = Tile())
-		: Piece{ color, pos } {}
-	~Pawn() {}
+    explicit Pawn(const Player color = Player::WHITE, const Tile &pos = Tile())
+        : Piece{ color, pos } {}
+    ~Pawn() {}
 
-	// Inherited from Piece base class
-	PieceType get_type() const override { return PieceType::P; }
+    // Inherited from Piece base class
+    PieceType get_type() const override { return P; }
 
-	// EFFECTS  Determine if move is valid capture placement (one tile forward
-	//			diagonal)
-	bool valid_capture_placement(const Tile &new_pos) const;
+    // EFFECTS  Determine if move is valid capture placement (one tile forward
+    //          diagonal)
+    bool valid_capture_placement(const Tile &new_pos) const;
 
-	// Inherited from Piece base class
-	bool valid_placement(const Tile &new_pos) const override;
+    // Inherited from Piece base class
+    bool valid_placement(const Tile &new_pos) const override;
 };
 
 #endif  // PAWN_H

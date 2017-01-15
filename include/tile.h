@@ -8,20 +8,20 @@
 #define TILE_H
 
 struct Tile {
-	explicit Tile(const int row = -1, const int col = -1)
-		: row{ row }, col{ col } {}
-	~Tile() {}
-	bool operator==(const Tile &other) const {
-		return row == other.row && col == other.col;
-	}
-	bool operator!=(const Tile &other) const {
-		return !(*this == other);
-	}
-	friend std::ostream &operator<<(std::ostream &os, const Tile &pos) {
-		return os << (char)(pos.col + 'a') << pos.row + 1;
-	}
-	int row;
-	int col;
+    explicit Tile(const int row = -1, const int col = -1)
+        : row{ row }, col{ col } {}
+    ~Tile() {}
+    bool operator==(const Tile &other) const {
+        return row == other.row && col == other.col;
+    }
+    bool operator!=(const Tile &other) const {
+        return !(*this == other);
+    }
+    friend std::ostream &operator<<(std::ostream &os, const Tile &pos) {
+        return os << (char)(pos.col + 'a') << pos.row + 1;
+    }
+    int row;
+    int col;
 };
 
 #endif  // TILE_H
