@@ -23,10 +23,9 @@ public:
 
 	virtual ~Piece() {}
 
+	// Getters
 	const Player &get_player() const { return color_; }
-
 	int get_row() const { return row_; }
-
 	int get_col() const { return col_; }
 
 	// EFFECTS  Returns piece position as Tile. Useful for passing into functions.
@@ -42,8 +41,7 @@ public:
 	};
 
 	friend std::ostream &operator<<(std::ostream &os, const PieceType pt) {
-		os << static_cast<std::underlying_type<PieceType>::type>(pt);
-		return os;
+		return os << static_cast<std::underlying_type<PieceType>::type>(pt);
 	}
 
 	// EFFECTS  Return piece type
@@ -56,8 +54,7 @@ public:
 	virtual bool valid_placement(const Tile &new_pos) const = 0;
 
 	friend std::ostream &operator<<(std::ostream &os, const Piece *p) {
-		os << p->get_player() << p->get_type();
-		return os;
+		return os << p->get_player() << p->get_type();
 	}
 
 private:

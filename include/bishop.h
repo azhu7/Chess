@@ -26,9 +26,8 @@ public:
 	// Inherited from LinearPiece class
 	Direction get_direction(const Tile &new_pos) const override {
 		// Move upwards (N)
-		if (new_pos.row > get_row()) {
+		if (new_pos.row > get_row())
 			return new_pos.col > get_col() ? Direction::NE : Direction::NW;
-		}
 		// Move downwards (S)
 		return new_pos.col > get_col() ? Direction::SE : Direction::SW;
 	}

@@ -78,12 +78,10 @@ int main(int argc, char *argv[]) {
 						out_file.close();
 					}
 					print_quit(log_name, write_log);
-					
 					return 0;
 				}
-				else if (input == "help") {
+				else if (input == "help")
 					print_instructions();
-				}
 				else if (regex_match(input.substr(0, 5), move_format)) {
 					parse_move(input, old_pos, new_pos);
 					Player current_player = move_maker.get_current_player();
@@ -92,31 +90,16 @@ int main(int argc, char *argv[]) {
 						log_move(out_file, old_pos, new_pos, current_player, 
 							valid_move);
 				}
-				else {
+				else
 					invalid_input_msg();
-				}
-			}
-		}
+			}  // if
+		}  // while
 		cout << '\n';
-	}
+	}  // while
 	return 0;
 }
 
 ////////// BEGIN PRINT FUNCTIONS //////////
-
-void print_intro() {
-	void print_instructions();
-	cout << "Hello! Welcome to chess.\n";
-	cout << "Would you like to see the instructions? (y/n): ";
-	char option = 0;
-	if (cin >> option && option == 'y') {
-		print_instructions();
-	}
-	// Ignore any extra input
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	cin.clear();
-	cout << "Let's get started!\n\n";
-}
 
 void print_instructions() {
 	cout << " --------------------------------\n";
@@ -126,6 +109,18 @@ void print_instructions() {
 	cout << "|   Show Instructions: help      |\n";
 	cout << "|   Quit: quit                   |\n";
 	cout << " --------------------------------\n";
+}
+
+void print_intro() {
+	cout << "Hello! Welcome to chess.\n";
+	cout << "Would you like to see the instructions? (y/n): ";
+	char option = 0;
+	if (cin >> option && option == 'y')
+		print_instructions();
+	// Ignore any extra input
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cin.clear();
+	cout << "Let's get started!\n\n";
 }
 
 void print_prompt(const MoveMaker &move_maker) {
@@ -175,12 +170,16 @@ int parse_col_label(const char col_label) {
 		{ 'g', 6 },
 		{ 'h', 7 }
 	};
-	assert(col_labels.find(col_label) != col_labels.end());
-	return col_labels.at(col_label);
+	auto itr = col_labels.find(col_label);
+	assert(itr != col_labels.end());
+	return itr->second;
 }
 
 ////////// BEGIN LOGGING FUNCTIONS //////////
 
+// REQUIRES ofs if open
+// MODIFIES ofs
+// EFFECTS  Write move to log
 void log_move(ofstream &ofs, const Tile &old_pos, const Tile &new_pos,
 	const Player player, const bool valid_move) {
 	assert(ofs.is_open());
@@ -190,7 +189,11 @@ void log_move(ofstream &ofs, const Tile &old_pos, const Tile &new_pos,
 	ofs << '\n';
 }
 
+// REQUIRES ofs is open
+// MODIFIES ofs
+// EFFECTS  Write board final layout to log
 void log_board_layout(ofstream &ofs, const MoveMaker &move_maker) {
+	assert(ofs.is_open());
 	ofs << "quit\n\nEnd State:\n";
 	move_maker.print_board(ofs);
 }

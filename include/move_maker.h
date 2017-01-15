@@ -36,12 +36,12 @@ public:
 private:
 	using Direction = LinearPiece::Direction;
 	Board *board_;
-	Tile p1_king;  // Track each player's king to help with check detection
-	Tile p2_king;
-	Tile last_en_passant_pos;  // Track tile of pawn that moved two ranks last move. 
+	Tile p1_king_;  // Track each player's king to help with check detection
+	Tile p2_king_;
+	Tile last_en_passant_pos_;  // Track tile of pawn that moved two ranks last move. 
 						 // {-1, -1} if none.
 	Player turn_;
-	mutable bool en_passant;  // True if current move is an en_passant. Used to
+	mutable bool en_passant_;  // True if current move is an en_passant. Used to
 							  // communicate between valid_move() and make_move()
 	//Player checked_;  // Player whose King is under attack
 						// Check detection not yet implemented
@@ -65,10 +65,10 @@ private:
 	// EFFECTS  Update the king's position as tracked by MoveMaker
 	void set_king_pos(const King *king) {
 		if (king->get_player() == Player::WHITE) {
-			p1_king = std::move(king->get_pos());
+			p1_king_ = std::move(king->get_pos());
 		}
 		else {
-			p2_king = std::move(king->get_pos());
+			p2_king_ = std::move(king->get_pos());
 		}
 	}
 

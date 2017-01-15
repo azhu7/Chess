@@ -1,0 +1,18 @@
+#include "../include/queen.h"
+
+LinearPiece::Direction Queen::get_direction(const Tile &new_pos) const {
+	const Tile cur_pos = get_pos();
+	// Move upwards (N)
+	if (new_pos.row > cur_pos.row) {
+		if (new_pos.col > cur_pos.col)
+			return Direction::NE;
+		return new_pos.col < cur_pos.col ? Direction::NW : Direction::N;
+	}
+	// Move horizontally
+	if (new_pos.row == cur_pos.row)
+		return new_pos.col < cur_pos.col ? Direction::W : Direction::E;
+	// Move downwards (S)
+	if (new_pos.col > cur_pos.col)
+		return Direction::SE;
+	return new_pos.col < cur_pos.col ? Direction::SW : Direction::S;
+}

@@ -18,8 +18,7 @@ struct Tile {
 		return !(*this == other);
 	}
 	friend std::ostream &operator<<(std::ostream &os, const Tile &pos) {
-		os << (char)(pos.col + 'a') << pos.row + 1;
-		return os;
+		return os << (char)(pos.col + 'a') << pos.row + 1;
 	}
 	int row;
 	int col;

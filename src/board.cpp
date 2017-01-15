@@ -9,9 +9,12 @@
 #include <iostream>
 #include <cassert>
 
+using PieceType = Piece::PieceType;
+using std::istream; using std::ostream; using std::cerr;
+
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
-Board::Board(std::istream &is)
+Board::Board(istream &is)
 {
 	// Fill board_ with nullptr
 	init_board();
@@ -40,7 +43,7 @@ Board::~Board() {
 }
 
 // EFFECTS  Helper function for printing out column labels
-void print_col_labels(std::ostream &os) {
+void print_col_labels(ostream &os) {
 	os << "    ";  // Front padding
 	for (int col = 0; col < kNumCols; ++col) {
 		os << (char)('a' + col) << "  ";
@@ -48,7 +51,7 @@ void print_col_labels(std::ostream &os) {
 	os << '\n';
 }
 
-std::ostream &operator<<(std::ostream &os, const Board &board) {
+ostream &operator<<(ostream &os, const Board &board) {
 	print_col_labels(os);  // Upper key
 
 	// Print rows from bottom up
@@ -74,8 +77,8 @@ std::ostream &operator<<(std::ostream &os, const Board &board) {
 }
 
 template <size_t rows, size_t cols>
-std::istream &operator>>(std::istream &is, Piece *(&board)[rows][cols]) {
-	std::cout << "Unimplemented!\n";
+istream &operator>>(istream &is, Piece *(&board)[rows][cols]) {
+	cerr << "Unimplemented!\n";
 	return is;
 }
 
@@ -91,17 +94,17 @@ void Board::init_board() {
 }
 
 inline Piece *Board::piece_factory(const Player color, const Tile &pos,
-	const char type) const {
+	const PieceType type) const {
 	switch (type) {
-	case 'P': return new Pawn(color, pos);
-	case 'N': return new Knight(color, pos);
-	case 'B': return new Bishop(color, pos);
-	case 'R': return new Rook(color, pos);
-	case 'Q': return new Queen(color, pos);
-	case 'K': return new King(color, pos);
+	case PieceType::P: return new Pawn(color, pos);
+	case PieceType::N: return new Knight(color, pos);
+	case PieceType::B: return new Bishop(color, pos);
+	case PieceType::R: return new Rook(color, pos);
+	case PieceType::Q: return new Queen(color, pos);
+	case PieceType::K: return new King(color, pos);
 	default: {
-		std::cerr << "Error: Invalid piece type " << type << '\n';
-		exit(1);
+		cerr << "Invalid Piece Type " << type << '\n';
+		return nullptr;
 	}
 	}
 }
@@ -110,7 +113,7 @@ inline void Board::place_pawns() {
 	const int white_pawn_row = 1, black_pawn_row = 6;
 	Tile white_pos{ white_pawn_row, 0 };
 	Tile black_pos{ black_pawn_row, 0 };
-	const char pawn = 'P';
+	const PieceType pawn{ PieceType::P };
 	for (int col = 0; col < kNumRows; ++col) {
 		white_pos.col = col;
 		black_pos.col = col;
@@ -120,8 +123,10 @@ inline void Board::place_pawns() {
 }
 
 inline void Board::place_pieces() {
-	const char kPieceKey[]{ 'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R' };  // Piece placements
+	// Piece placements
 	const int white_piece_row = 0, black_piece_row = 7;
+	const PieceType kPieceKey[kNumCols]{ PieceType::R, PieceType::N, PieceType::B, 
+		PieceType::Q, PieceType::K, PieceType::B, PieceType::N, PieceType::R };
 	Tile white_pos{ white_piece_row, 0 };
 	Tile black_pos{ black_piece_row, 0 };
 	for (int col = 0; col < kNumCols; ++col) {

@@ -7,12 +7,11 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include "piece.h"
 #include "player.h"
 #include "tile.h"
 #include <cassert>
 #include <istream>
-
-class Piece;
 
 static const int kNumRows = 8;  // TODO: Want to define in cpp, but board_ needs here
 static const int kNumCols = 8;
@@ -93,7 +92,7 @@ private:
 
 	// EFFECTS  Generate a dynamically allocated Piece object
 	Piece *piece_factory(const Player color, const Tile &pos,
-		const char type) const;
+		const Piece::PieceType type) const;
 
 	// MODIFIES board_
 	// EFFECTS  Places pawns on board during initialization

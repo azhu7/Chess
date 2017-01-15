@@ -15,24 +15,22 @@ bool Pawn::valid_placement(const Tile &new_pos) const {
 	const int col_diff = new_pos.col - get_col();
 
 	// Pawns cannot move left/right except to capture
-	// (checked w/ Pawn::valid_capture_placement())
+	// (checked by Pawn::valid_capture_placement())
 	if (col_diff)
 		return false;
 
 	// Case 1: white pawn
 	if (get_player() == Player::WHITE) {
 		// First move can go 1 or 2 tiles up
-		if (get_row() == kWhitePawnStart) {
+		if (get_row() == kWhitePawnStart)
 			return (row_diff == 1) || (row_diff == 2);
-		}
 		// Otherwise, can only go 1 tile up
 		return row_diff == 1;
 	}
 	// Case 2: black pawn
 	// First move can go 1 or 2 tiles down
-	if (get_row() == kBlackPawnStart) {
+	if (get_row() == kBlackPawnStart)
 		return (row_diff == -1 || row_diff == -2);
-	}
 	// Otherwise, can only go 1 tile down
 	return row_diff == -1;
 }

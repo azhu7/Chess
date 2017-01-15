@@ -16,8 +16,7 @@ enum class Player : char {
 
 // Print Player as char value
 static std::ostream &operator<<(std::ostream &os, const Player p) {
-	os << static_cast<std::underlying_type<Player>::type>(p);
-	return os;
+	return os << static_cast<std::underlying_type<Player>::type>(p);
 }
 
 #endif  // PLAYER_H
