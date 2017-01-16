@@ -17,7 +17,6 @@ class Pawn : public Piece {
 public:
     explicit Pawn(const Player color = Player::WHITE, const Tile &pos = Tile())
         : Piece{ color, pos } {}
-    ~Pawn() {}
 
     // Inherited from Piece base class
     PieceType get_type() const override { return P; }

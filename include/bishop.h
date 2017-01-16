@@ -13,7 +13,6 @@ class Bishop : public LinearPiece {
 public:
     explicit Bishop(const Player color = Player::WHITE, const Tile &pos = Tile())
         : LinearPiece{ color, pos } {}
-    ~Bishop() {}
 
     // Inherited from Piece base class
     PieceType get_type() const override { return B; };

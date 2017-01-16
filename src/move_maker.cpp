@@ -5,6 +5,7 @@
 #include "../include/knight.h"
 #include "../include/rook.h"
 #include "../include/queen.h"
+#include "../include/king.h"
 
 using std::cerr; using std::ostream;
 
@@ -131,6 +132,15 @@ bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
         current_tile.col += horiz_mvmt;
     }
     return false;
+}
+
+void MoveMaker::set_king_pos(const King *king) {
+    if (king->get_player() == Player::WHITE) {
+        p1_king_ = std::move(king->get_pos());
+    }
+    else {
+        p2_king_ = std::move(king->get_pos());
+    }
 }
 
 void MoveMaker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {

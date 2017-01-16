@@ -13,7 +13,6 @@ class King : public Piece {
 public:
     explicit King(const Player color = Player::WHITE, const Tile &pos = Tile())
         : Piece{ color, pos }, has_moved_{ false } {}
-    ~King() {}
 
     bool has_moved() const { return has_moved_; }
 

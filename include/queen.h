@@ -13,7 +13,6 @@ class Queen : public LinearPiece {
 public:
     explicit Queen(const Player color = Player::WHITE, const Tile &pos = Tile())
         : LinearPiece{ color, pos } {}
-    ~Queen() {}
 
     // Inherited from Piece base class
     PieceType get_type() const override { return Q; };

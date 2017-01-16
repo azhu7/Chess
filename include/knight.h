@@ -13,7 +13,6 @@ class Knight : public Piece {
 public:
     explicit Knight(const Player color = Player::WHITE, const Tile &pos = Tile())
         : Piece{ color, pos } {}
-    ~Knight() {}
 
     // Inherited from Piece base class
     PieceType get_type() const override { return N; };

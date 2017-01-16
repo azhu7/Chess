@@ -15,7 +15,6 @@ class LinearPiece : public Piece {
 public:
     explicit LinearPiece(const Player color = Player::WHITE, const Tile &pos = Tile())
         : Piece{ color, pos } {}
-    ~LinearPiece() {}
 
     enum Direction {
         N, S, E, W, NE, NW, SE, SW

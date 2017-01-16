@@ -8,11 +8,10 @@
 #ifndef MOVE_MAKER_H
 #define MOVE_MAKER_H
 
-#include "player.h"
-#include "king.h"
 #include "linear_piece.h"
 
 class Board;
+class King;
 
 // REQUIRES User must initialize MoveMaker with a Board object. This way, the
 //          user can load different piece layouts.
@@ -21,6 +20,10 @@ class Board;
 class MoveMaker {
 public:
     explicit MoveMaker(Board *board);
+    MoveMaker(const MoveMaker &) = delete;
+    MoveMaker &operator=(const MoveMaker &) = delete;
+    MoveMaker(MoveMaker &&) = delete;
+    MoveMaker &operator=(MoveMaker &&) = delete;
     ~MoveMaker() {}
 
     // EFFECTS  Return current player
@@ -63,14 +66,7 @@ private:
 
     // MODIFIES p1_king or p2_king depending on which player king belongs to
     // EFFECTS  Update the king's position as tracked by MoveMaker
-    void set_king_pos(const King *king) {
-        if (king->get_player() == Player::WHITE) {
-            p1_king_ = std::move(king->get_pos());
-        }
-        else {
-            p2_king_ = std::move(king->get_pos());
-        }
-    }
+    void set_king_pos(const King *king);
 
     // MODIFIES rook, board_
     // EFFECTS  Moves rook to correct castle position. Called by make_move()

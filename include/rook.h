@@ -13,7 +13,6 @@ class Rook : public LinearPiece {
 public:
     explicit Rook(const Player color = Player::WHITE, const Tile &pos = Tile())
         : LinearPiece{ color, pos }, has_moved_{ false } {}
-    ~Rook() {}
 
     bool has_moved() const { return has_moved_; }
 

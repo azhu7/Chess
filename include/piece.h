@@ -16,10 +16,6 @@ class Piece {
 public:
     explicit Piece(const Player color = Player::WHITE, const Tile &pos = Tile())
         : color_{ color }, row_{ pos.row }, col_{ pos.col } {}
-    Piece(const Piece &) = delete; 
-    Piece(Piece &&) = delete;
-    Piece &operator=(const Piece &) = delete;
-    Piece &operator=(Piece &&) = delete;
     virtual ~Piece() {}
 
     // Getters

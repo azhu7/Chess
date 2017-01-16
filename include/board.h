@@ -8,12 +8,10 @@
 #define BOARD_H
 
 #include "piece.h"
-#include "player.h"
-#include "tile.h"
 #include <cassert>
 #include <istream>
 
-static const int kNumRows = 8;  // TODO: Want to define in cpp, but board_ needs here
+static const int kNumRows = 8;
 static const int kNumCols = 8;
 
 // Simple board: pieces are stored in 8x8 array of pointers to pieces.
@@ -31,10 +29,6 @@ public:
 
     explicit Board(std::istream &is);
     explicit Board();
-    Board(const Board &) = delete;
-    Board(Board &&) = delete;
-    Board &operator=(const Board &) = delete;
-    Board &operator=(Board &&) = delete;
     ~Board();
 
     // REQUIRES pos is valid tile
