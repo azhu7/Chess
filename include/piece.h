@@ -9,7 +9,6 @@
 
 #include "player.h"
 #include "tile.h"
-#include <iostream>
 #include <cassert>
 
 class Piece {

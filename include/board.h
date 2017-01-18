@@ -11,9 +11,6 @@
 #include <cassert>
 #include <istream>
 
-static const int kNumRows = 8;
-static const int kNumCols = 8;
-
 // Simple board: pieces are stored in 8x8 array of pointers to pieces.
 // Provides functions for accessing and updating board.
 // MoveMaker wrapper required to reinforce rules for making certain moves.
@@ -73,6 +70,8 @@ public:
     friend std::istream &operator>>(std::istream &, Piece *(&board)[rows][cols]);
 
 private:
+    static const int kNumRows = 8;
+    static const int kNumCols = 8;
     Piece *board_[kNumRows][kNumCols];  // 8x8 board of pointers to pieces
 
     // MODIFIES board_

@@ -6,7 +6,6 @@
 #include "../include/rook.h"
 #include "../include/queen.h"
 #include "../include/king.h"
-#include <iostream>
 #include <cassert>
 
 using std::istream; using std::ostream; using std::cerr;
@@ -40,22 +39,22 @@ Board::~Board() {
 }
 
 // EFFECTS  Helper function for printing out column labels
-void print_col_labels(ostream &os) {
+static void print_col_labels(ostream &os, const int num_cols) {
     os << "    ";  // Front padding
-    for (int col = 0; col < kNumCols; ++col) {
+    for (int col = 0; col < num_cols; ++col) {
         os << (char)('a' + col) << "  ";
     }
     os << '\n';
 }
 
 ostream &operator<<(ostream &os, const Board &board) {
-    print_col_labels(os);  // Upper key
+    print_col_labels(os, board.kNumCols);  // Upper key
 
     // Print rows from bottom up
-    for (int row = kNumRows - 1; row >= 0; --row) {
+    for (int row = board.kNumRows - 1; row >= 0; --row) {
         Tile cur_tile{ row, 0 };
         os << row + 1 << " | ";  // LHS key
-        for (int col = 0; col < kNumCols; ++col) {
+        for (int col = 0; col < board.kNumCols; ++col) {
             cur_tile.col = col;
             const Piece *cur_piece = board.get_tile(cur_tile);
             if (cur_piece) {
@@ -69,7 +68,7 @@ ostream &operator<<(ostream &os, const Board &board) {
         os << " | " << row + 1 << '\n';  // RHS key
     }
 
-    print_col_labels(os);  // Lower key
+    print_col_labels(os, board.kNumCols);  // Lower key
     return os;
 }
 
