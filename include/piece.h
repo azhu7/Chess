@@ -34,10 +34,6 @@ public:
         P = 'P', B = 'B', N = 'N', R = 'R', Q = 'Q', K = 'K'
     };
 
-    friend std::ostream &operator<<(std::ostream &os, const PieceType pt) {
-        return os << static_cast<std::underlying_type<PieceType>::type>(pt);
-    }
-
     // EFFECTS  Return piece type
     virtual PieceType get_type() const = 0;
 
@@ -47,14 +43,14 @@ public:
     //          the way.
     virtual bool valid_placement(const Tile &new_pos) const = 0;
 
-    friend std::ostream &operator<<(std::ostream &os, const Piece *p) {
-        return os << p->get_player() << p->get_type();
-    }
-
 private:
     Player color_;
     int row_;
     int col_;
 };
+
+std::ostream &operator<<(std::ostream &os, const Piece::PieceType pt);
+
+std::ostream &operator<<(std::ostream &os, const Piece *p);
 
 #endif  //PIECE_H

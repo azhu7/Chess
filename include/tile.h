@@ -7,21 +7,23 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <ostream>
+
 struct Tile {
-    explicit Tile(const int row = -1, const int col = -1)
+    explicit Tile(int row = -1, int col = -1)
         : row{ row }, col{ col } {}
     ~Tile() {}
-    bool operator==(const Tile &other) const {
-        return row == other.row && col == other.col;
+    bool operator==(const Tile &rhs) const {
+        return row == rhs.row && col == rhs.col;
     }
-    bool operator!=(const Tile &other) const {
-        return !(*this == other);
+    bool operator!=(const Tile &rhs) const {
+        return !(*this == rhs);
     }
-    friend std::ostream &operator<<(std::ostream &os, const Tile &pos) {
-        return os << (char)(pos.col + 'a') << pos.row + 1;
-    }
+    
     int row;
     int col;
 };
+
+std::ostream &operator<<(std::ostream &os, const Tile &pos);
 
 #endif  // TILE_H

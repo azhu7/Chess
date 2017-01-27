@@ -16,11 +16,11 @@
 
 #include "../include/board.h"
 #include "../include/move_maker.h"
-#include <iostream>
 #include <fstream>
-#include <unordered_map>
+#include <iostream>
 #include <regex>
 #include <string>
+#include <unordered_map>
 
 using namespace std;
 

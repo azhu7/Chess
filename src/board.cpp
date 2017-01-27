@@ -1,12 +1,14 @@
 #include "../include/board.h"
-#include "../include/piece.h"
-#include "../include/pawn.h"
+
 #include "../include/bishop.h"
-#include "../include/knight.h"
-#include "../include/rook.h"
-#include "../include/queen.h"
 #include "../include/king.h"
+#include "../include/knight.h"
+#include "../include/pawn.h"
+#include "../include/piece.h"
+#include "../include/queen.h"
+#include "../include/rook.h"
 #include <cassert>
+#include <iostream>
 
 using std::istream; using std::ostream; using std::cerr;
 
@@ -39,7 +41,7 @@ Board::~Board() {
 }
 
 // EFFECTS  Helper function for printing out column labels
-static void print_col_labels(ostream &os, const int num_cols) {
+static void print_col_labels(ostream &os, int num_cols) {
     os << "    ";  // Front padding
     for (int col = 0; col < num_cols; ++col) {
         os << (char)('a' + col) << "  ";

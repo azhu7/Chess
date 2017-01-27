@@ -7,7 +7,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <iostream>
+#include <ostream>
 
 enum class Player : char {
     WHITE = '1',
@@ -15,8 +15,6 @@ enum class Player : char {
 };
 
 // Print Player as char value
-static std::ostream &operator<<(std::ostream &os, const Player p) {
-    return os << static_cast<std::underlying_type<Player>::type>(p);
-}
+std::ostream &operator<<(std::ostream &os, const Player p);
 
 #endif  // PLAYER_H

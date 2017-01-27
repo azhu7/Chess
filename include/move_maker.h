@@ -9,6 +9,7 @@
 #define MOVE_MAKER_H
 
 #include "linear_piece.h"
+#include <iostream>
 
 class Board;
 class King;

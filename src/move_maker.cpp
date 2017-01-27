@@ -1,11 +1,12 @@
 #include "../include/move_maker.h"
-#include "../include/board.h"
-#include "../include/pawn.h"
+
 #include "../include/bishop.h"
-#include "../include/knight.h"
-#include "../include/rook.h"
-#include "../include/queen.h"
+#include "../include/board.h"
 #include "../include/king.h"
+#include "../include/knight.h"
+#include "../include/pawn.h"
+#include "../include/queen.h"
+#include "../include/rook.h"
 
 using std::cerr; using std::ostream;
 
@@ -14,8 +15,8 @@ static const Tile P2_KING_START{ 7, 4 };
 
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
-MoveMaker::MoveMaker(Board *board)
-    : board_{ board }, p1_king_{ P1_KING_START }, p2_king_{ P2_KING_START },
+MoveMaker::MoveMaker(Board *board_ptr)
+    : board_{ board_ptr }, p1_king_{ P1_KING_START }, p2_king_{ P2_KING_START },
     last_en_passant_pos_{ Tile{} }, turn_{ Player::WHITE }, en_passant_{ false } {}
 
 bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
@@ -145,8 +146,8 @@ void MoveMaker::set_king_pos(const King *king) {
 
 void MoveMaker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
     // lambda to move rook to castled position
-    static auto move_rook_to_castled = [&](const int rook_col, 
-        const int castled_col) {
+    static auto move_rook_to_castled = [&](int rook_col, 
+        int castled_col) {
         const Tile rook_pos{ old_pos.row, rook_col };
         const Tile castled_pos{ old_pos.row, castled_col };
         Rook *temp_rook = static_cast<Rook *>(board_->get_tile(rook_pos));
@@ -170,7 +171,7 @@ bool MoveMaker::valid_castle(const King *king, const Tile &new_pos) const {
     assert(cur_pos.col == P1_KING_START.col);  // king should be in starting position
 
     // lambda to check that rook hasn't moved and no collisions from king to rook
-    static auto rook_and_collision_check = [&](const Tile &cur_pos, const int rook_col, 
+    static auto rook_and_collision_check = [&](const Tile &cur_pos, int rook_col, 
         const Direction direction) {
         // Check corner for rook
         const Tile rook_tile{ cur_pos.row, rook_col };
