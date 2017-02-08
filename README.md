@@ -1,4 +1,4 @@
-# Chess
+# Chess (v1.7)
 Chess game implemented in C++
 
 Dependencies:
