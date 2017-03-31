@@ -1,5 +1,10 @@
-#include "../include/player.h"
+#include "Player.h"
 
-std::ostream &operator<<(std::ostream &os, Player p) {
-    return os << static_cast<std::underlying_type<Player>::type>(p);
+#include <ostream>
+
+using std::ostream;
+using std::underlying_type;
+
+ostream &operator<<(ostream &os, Player p) {
+    return os << static_cast<underlying_type<Player>::type>(p);
 }

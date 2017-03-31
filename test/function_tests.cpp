@@ -1,7 +1,7 @@
-#include "../include/bishop.h"
-#include "../include/queen.h"
-#include "../include/knight.h"
-#include "../include/king.h"
+#include "bishop.h"
+#include "queen.h"
+#include "knight.h"
+#include "king.h"
 #include <iostream>
 #include <cassert>
 

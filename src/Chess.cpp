@@ -17,8 +17,9 @@
 *    File for board layout, have board read it in?
 */
 
-#include "../include/board.h"
-#include "../include/move_maker.h"
+#include "Board.h"
+#include "Move_maker.h"
+
 #include <fstream>
 #include <iostream>
 #include <regex>

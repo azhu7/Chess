@@ -1,4 +1,4 @@
-#include "../include/pawn.h"
+#include "Pawn.h"
 
 bool Pawn::valid_capture_placement(const Tile &new_pos) const {
     const int row_diff = new_pos.row - get_row();

@@ -1,4 +1,4 @@
-#include "../include/queen.h"
+#include "Queen.h"
 
 LinearPiece::Direction Queen::get_direction(const Tile &new_pos) const {
     const Tile cur_pos = get_pos();

@@ -1,12 +1,14 @@
-#include "../include/move_maker.h"
+#include "Move_maker.h"
 
-#include "../include/bishop.h"
-#include "../include/board.h"
-#include "../include/king.h"
-#include "../include/knight.h"
-#include "../include/pawn.h"
-#include "../include/queen.h"
-#include "../include/rook.h"
+#include "Bishop.h"
+#include "Board.h"
+#include "King.h"
+#include "Knight.h"
+#include "Pawn.h"
+#include "Queen.h"
+#include "Rook.h"
+
+#include <iostream>
 
 using std::cerr; using std::ostream;
 
@@ -136,12 +138,10 @@ bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
 }
 
 void MoveMaker::set_king_pos(const King *king) {
-    if (king->get_player() == Player::WHITE) {
-        p1_king_ = std::move(king->get_pos());
-    }
-    else {
-        p2_king_ = std::move(king->get_pos());
-    }
+    if (king->get_player() == Player::WHITE)
+        p1_king_ = king->get_pos();
+    else
+        p2_king_ = king->get_pos();
 }
 
 void MoveMaker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {

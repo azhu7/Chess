@@ -1,11 +1,12 @@
-#include "../include/Piece_factory.h";
-#include "../include/bishop.h"
-#include "../include/king.h"
-#include "../include/knight.h"
-#include "../include/pawn.h"
-#include "../include/queen.h"
-#include "../include/rook.h"
-#include "../include/Utility.h"
+#include "Piece_factory.h";
+
+#include "Bishop.h"
+#include "King.h"
+#include "Knight.h"
+#include "Pawn.h"
+#include "Queen.h"
+#include "Rook.h"
+#include "Utility.h"
 
 Piece *create_piece(const Player color, const Tile &pos, const Piece::PieceType type) {
     switch (type) {
@@ -16,5 +17,5 @@ Piece *create_piece(const Player color, const Tile &pos, const Piece::PieceType 
     case Piece::Q: return new Queen{ color, pos };
     case Piece::K: return new King{ color, pos };
     }
-    throw Error{ "Invalid Piece Type " << type << '\n' };
+    throw Error{ "Invalid Piece Type " + type + '\n' };
 }

@@ -1,9 +1,14 @@
-#include "../include/piece.h"
+#include "Piece.h"
 
-std::ostream &operator<<(std::ostream &os, const Piece::PieceType pt) {
-    return os << static_cast<std::underlying_type<Piece::PieceType>::type>(pt);
+#include <ostream>
+
+using std::ostream;
+using std::underlying_type;
+
+ostream &operator<<(ostream &os, const Piece::PieceType pt) {
+    return os << static_cast<underlying_type<Piece::PieceType>::type>(pt);
 }
 
-std::ostream &operator<<(std::ostream &os, const Piece *p) {
+ostream &operator<<(ostream &os, const Piece *p) {
     return os << p->get_player() << p->get_type();
 }
