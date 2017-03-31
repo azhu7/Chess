@@ -1,13 +1,13 @@
-#include "../include/board.h"
+#include "../include/Board.h"
 
-#include "../include/bishop.h"
-#include "../include/king.h"
-#include "../include/knight.h"
-#include "../include/pawn.h"
-#include "../include/piece.h"
+#include "../include/Bishop.h"
+#include "../include/King.h"
+#include "../include/Knight.h"
+#include "../include/Pawn.h"
+#include "../include/Piece.h"
 #include "../include/Piece_factory.h"
-#include "../include/queen.h"
-#include "../include/rook.h"
+#include "../include/Queen.h"
+#include "../include/Rook.h"
 #include <cassert>
 #include <iostream>
 
