@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Implementation for Queen piece
+*/
+
 #include "Queen.h"
 
 LinearPiece::Direction Queen::get_direction(const Tile &new_pos) const {

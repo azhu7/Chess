@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for King piece
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for King piece
 */
 
 #ifndef KING_H
@@ -33,4 +33,4 @@ private:
     bool has_moved_;  // Can only castle if !moved_
 };
 
-#endif  // KING_H
+#endif  // !KING_H

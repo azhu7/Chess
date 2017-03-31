@@ -1,4 +1,4 @@
-#include "Piece_factory.h";
+#include "Piece_factory.h"
 
 #include "Bishop.h"
 #include "King.h"
@@ -8,7 +8,9 @@
 #include "Rook.h"
 #include "Utility.h"
 
-Piece *create_piece(const Player color, const Tile &pos, const Piece::PieceType type) {
+// Allocates and initializes piece based on supplied information. Throws error
+// on invalid type.
+Piece *create_piece(Player color, Tile pos, Piece::PieceType type) {
     switch (type) {
     case Piece::P: return new Pawn{ color, pos };
     case Piece::N: return new Knight{ color, pos };

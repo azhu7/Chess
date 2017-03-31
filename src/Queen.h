@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for Queen piece
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for Queen piece
 */
 
 #ifndef QUEEN_H
@@ -28,4 +28,4 @@ public:
     Direction get_direction(const Tile &new_pos) const override;
 };
 
-#endif  // QUEEN_H
+#endif  // !QUEEN_H

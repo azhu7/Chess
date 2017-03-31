@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for abstract piece
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for abstract piece
 */
 
 #ifndef PIECE_H
@@ -54,4 +54,4 @@ std::ostream &operator<<(std::ostream &os, const Piece::PieceType pt);
 
 std::ostream &operator<<(std::ostream &os, const Piece *p);
 
-#endif  //PIECE_H
+#endif  // !PIECE_H

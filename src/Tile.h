@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: December 22, 2016
-*  Description: Header file for board tile
+/**
+    Author: Alexander Zhu
+    Date Created: December 22, 2016
+    Description: Header file for board tile
 */
 
 #ifndef TILE_H
@@ -26,4 +26,4 @@ struct Tile {
 
 std::ostream &operator<<(std::ostream &os, const Tile &pos);
 
-#endif  // TILE_H
+#endif  // !TILE_H

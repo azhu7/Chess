@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for Rook piece
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for Rook piece
 */
 
 #ifndef ROOK_H
@@ -42,4 +42,4 @@ private:
     bool has_moved_;
 };
 
-#endif  // ROOK_H
+#endif  // !ROOK_H

@@ -47,15 +47,7 @@ void log_move(ofstream &ofs, const Tile &old_pos, const Tile &new_pos,
     const Player player, const bool valid_move);
 void log_board_layout(ofstream &ofs, const MoveMaker &move_maker);
 
-void f() {
-    int x = 0;
-    auto z1 = [&x](int &x) mutable { x++; };
-    z1(x);
-    cout << x << endl;
-}
-
 int main(int argc, char *argv[]) {
-    f();
     Board board;
     MoveMaker move_maker{ &board };
     regex move_format{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
@@ -77,7 +69,7 @@ int main(int argc, char *argv[]) {
     print_intro();
 
     while (true) {
-        move_maker.print_board();
+        move_maker.print_board(cout);
         Tile old_pos, new_pos;
         bool valid_move = false;
         while (!valid_move) {

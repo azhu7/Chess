@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: December 22, 2016
+    Description: Implementation for board tile
+*/
+
 #include "Tile.h"
 
 #include <ostream>

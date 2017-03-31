@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for chess board
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for chess board
 */
 
 #ifndef BOARD_H
@@ -91,4 +91,4 @@ private:
     void place_pieces();
 };
 
-#endif  // BOARD_H
+#endif  // !BOARD_H

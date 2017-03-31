@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for Player enum
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for Player enum
 */
 
 #ifndef PLAYER_H
@@ -17,4 +17,4 @@ enum class Player : char {
 // Print Player as char value
 std::ostream &operator<<(std::ostream &os, const Player p);
 
-#endif  // PLAYER_H
+#endif  // !PLAYER_H

@@ -1,4 +1,14 @@
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Implementation for Pawn piece
+*/
+
 #include "Pawn.h"
+
+#include <cmath>
+
+using std::abs;
 
 bool Pawn::valid_capture_placement(const Tile &new_pos) const {
     const int row_diff = new_pos.row - get_row();

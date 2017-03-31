@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Implementation for Chess board
+*/
+
 #include "Board.h"
 
 #include "Bishop.h"
@@ -17,8 +23,7 @@ using std::is_base_of;
 
 ////////// BEGIN PUBLIC FUNCTIONS //////////
 
-Board::Board(istream &is)
-{
+Board::Board(istream &is) {
     // Fill board_ with nullptr
     init_blank_board();
     // Read in piece layout from input stream
@@ -94,7 +99,7 @@ void Board::init_blank_board() {
     }
 }
 
-inline void Board::place_pawns() {
+void Board::place_pawns() {
     const int white_pawn_row = 1, black_pawn_row = 6;
     Tile white_pos{ white_pawn_row, 0 };
     Tile black_pos{ black_pawn_row, 0 };
@@ -106,7 +111,7 @@ inline void Board::place_pawns() {
     }
 }
 
-inline void Board::place_pieces() {
+void Board::place_pieces() {
     // Piece placements
     const int white_piece_row = 0, black_piece_row = 7;
     const Piece::PieceType kPieceKey[kNumCols]{ Piece::R, Piece::N, Piece::B,

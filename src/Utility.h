@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: March 31, 2017
+    Description: Header file for Chess Utility
+*/
+
 #ifndef UTILITY_H
 #define UTILITY_H
 

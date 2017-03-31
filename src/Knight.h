@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for Knight piece
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for Knight piece
 */
 
 #ifndef KNIGHT_H
@@ -33,4 +33,4 @@ private:
     }
 };
 
-#endif  // KNIGHT_H
+#endif  // !KNIGHT_H

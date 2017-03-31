@@ -1,8 +1,8 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: December 23, 2016
-*  Description: Header file for linear pieces (Bishop, Rook, Queen). A linear
-*               piece moves in an extended straight line (more than one tile at once)
+/**
+    Author: Alexander Zhu
+    Date Created: December 23, 2016
+    Description: A linear piece can move in an extended straight line (more than 
+                 one tile)
 */
 
 #ifndef LINEAR_PIECE_H
@@ -51,4 +51,4 @@ protected:
     }
 };
 
-#endif  // LINEAR_PIECE_H
+#endif  // !LINEAR_PIECE_H

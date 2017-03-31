@@ -1,7 +1,7 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for Bishop piece
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for Bishop piece
 */
 
 #ifndef BISHOP_H
@@ -32,4 +32,4 @@ public:
     }
 };
 
-#endif  // BISHOP_H
+#endif  // !BISHOP_H

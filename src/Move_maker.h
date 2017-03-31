@@ -1,8 +1,8 @@
-/*
-*  Author: Alexander Zhu
-*  Date Created: November 20, 2016
-*  Description: Header file for MoveMaker, a wrapper class for the Board.
-*               Used to enforce chess rules when moving pieces.
+/**
+    Author: Alexander Zhu
+    Date Created: November 20, 2016
+    Description: Header file for MoveMaker. Enforces chess rules for moving 
+                 pieces.
 */
 
 #ifndef MOVE_MAKER_H
@@ -36,7 +36,7 @@ public:
     //*** TODO     Update to return different enum codes?
     bool make_move(const Tile &old_pos, const Tile &new_pos);
 
-    void print_board(std::ostream &os = std::cout) const;
+    void print_board(std::ostream &os) const;
 
 private:
     using Direction = LinearPiece::Direction;
@@ -90,4 +90,4 @@ private:
     bool detect_checkmate() const;
 };
 
-#endif  // MOVE_MAKER_H
+#endif  // !MOVE_MAKER_H
