@@ -81,10 +81,6 @@ private:
     // EFFECTS  Places piece on board_ at specified tile
     void set_tile(const Tile &pos, Piece *piece) { get_tile(pos) = piece; }
 
-    // EFFECTS  Generate a dynamically allocated Piece object
-    template<typename T>
-    T *piece_factory(const Player color, const Tile &pos) const;
-
     // MODIFIES board_
     // EFFECTS  Places pawns on board during initialization
     void place_pawns();

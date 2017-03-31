@@ -5,6 +5,7 @@
 #include "../include/knight.h"
 #include "../include/pawn.h"
 #include "../include/piece.h"
+#include "../include/Piece_factory.h"
 #include "../include/queen.h"
 #include "../include/rook.h"
 #include <cassert>
@@ -92,22 +93,6 @@ void Board::init_blank_board() {
     }
 }
 
-inline Piece *Board::piece_factory(const Player color, const Tile &pos,
-    const Piece::PieceType type) const {
-    switch (type) {
-    case Piece::P: return new Pawn{ color, pos };
-    case Piece::N: return new Knight{ color, pos };
-    case Piece::B: return new Bishop{ color, pos };
-    case Piece::R: return new Rook{ color, pos };
-    case Piece::Q: return new Queen{ color, pos };
-    case Piece::K: return new King{ color, pos };
-    default: {
-        cerr << "Invalid Piece Type " << type << '\n';
-        return nullptr;
-    }
-    }
-}
-
 inline void Board::place_pawns() {
     const int white_pawn_row = 1, black_pawn_row = 6;
     Tile white_pos{ white_pawn_row, 0 };
@@ -115,8 +100,8 @@ inline void Board::place_pawns() {
     for (int col = 0; col < kNumRows; ++col) {
         white_pos.col = col;
         black_pos.col = col;
-        set_tile(white_pos, piece_factory<Pawn>(Player::WHITE, white_pos));
-        set_tile(black_pos, piece_factory<Pawn>(Player::BLACK, black_pos));
+        set_tile(white_pos, create_piece(Player::WHITE, white_pos, Piece::P));
+        set_tile(black_pos, create_piece(Player::BLACK, black_pos, Piece::P));
     }
 }
 
@@ -130,7 +115,7 @@ inline void Board::place_pieces() {
     for (int col = 0; col < kNumCols; ++col) {
         white_pos.col = col;
         black_pos.col = col;
-        set_tile(white_pos, piece_factory(Player::WHITE, white_pos, kPieceKey[col]));
-        set_tile(black_pos, piece_factory(Player::BLACK, black_pos, kPieceKey[col]));
+        set_tile(white_pos, create_piece(Player::WHITE, white_pos, kPieceKey[col]));
+        set_tile(black_pos, create_piece(Player::BLACK, black_pos, kPieceKey[col]));
     }
 }
