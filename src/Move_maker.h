@@ -19,14 +19,14 @@ class King;
 //          user can load different piece layouts.
 // EXAMPLE  Board board;
 //          MoveMaker move_maker{ board };
-class MoveMaker {
+class Move_maker {
 public:
-    explicit MoveMaker(Board *board);
-    MoveMaker(const MoveMaker &) = delete;
-    MoveMaker &operator=(const MoveMaker &) = delete;
-    MoveMaker(MoveMaker &&) = delete;
-    MoveMaker &operator=(MoveMaker &&) = delete;
-    ~MoveMaker() {}
+    explicit Move_maker(Board *board);
+    Move_maker(const Move_maker &) = delete;
+    Move_maker &operator=(const Move_maker &) = delete;
+    Move_maker(Move_maker &&) = delete;
+    Move_maker &operator=(Move_maker &&) = delete;
+    ~Move_maker() {}
 
     // EFFECTS  Return current player
     const Player &get_current_player() const { return turn_; }

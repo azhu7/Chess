@@ -6,6 +6,10 @@
 
 #include "Queen.h"
 
+/*
+Queen public members
+*/
+
 LinearPiece::Direction Queen::get_direction(const Tile &new_pos) const {
     const Tile cur_pos = get_pos();
     // Move upwards (N)

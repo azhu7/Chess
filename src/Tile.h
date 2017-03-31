@@ -20,10 +20,10 @@ struct Tile {
         return !(*this == rhs);
     }
     
+    friend std::ostream &operator<<(std::ostream &os, const Tile &pos);
+
     int row;
     int col;
 };
-
-std::ostream &operator<<(std::ostream &os, const Tile &pos);
 
 #endif  // !TILE_H

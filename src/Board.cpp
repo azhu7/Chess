@@ -21,7 +21,9 @@
 using std::istream; using std::ostream; using std::cerr;
 using std::is_base_of;
 
-////////// BEGIN PUBLIC FUNCTIONS //////////
+/*
+Board public members
+*/
 
 Board::Board(istream &is) {
     // Fill board_ with nullptr
@@ -88,7 +90,9 @@ istream &operator>>(istream &is, Piece *(&board)[rows][cols]) {
     return is;
 }
 
-////////// BEGIN PRIVATE FUNCTIONS //////////
+/*
+Board private members
+*/
 
 void Board::init_blank_board() {
     // Initialize 8x8 array of nullptrs

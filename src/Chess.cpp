@@ -31,7 +31,7 @@ using namespace std;
 // Print Functions
 void print_instructions();
 void print_intro();
-void print_prompt(const MoveMaker &move_maker);
+void print_prompt(const Move_maker &move_maker);
 void print_quit(const string &log_name, bool write_log);
 
 // Error Messages
@@ -45,11 +45,11 @@ int parse_col_label(const char col_label);
 // Logging Functions
 void log_move(ofstream &ofs, const Tile &old_pos, const Tile &new_pos, 
     const Player player, const bool valid_move);
-void log_board_layout(ofstream &ofs, const MoveMaker &move_maker);
+void log_board_layout(ofstream &ofs, const Move_maker &move_maker);
 
 int main(int argc, char *argv[]) {
     Board board;
-    MoveMaker move_maker{ &board };
+    Move_maker move_maker{ &board };
     regex move_format{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
     ofstream out_file;
     string log_name;
@@ -103,7 +103,9 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-////////// BEGIN PRINT FUNCTIONS //////////
+/*
+Print functions
+*/
 
 void print_instructions() {
     cout << " --------------------------------\n";
@@ -127,7 +129,7 @@ void print_intro() {
     cout << "Let's get started!\n\n";
 }
 
-void print_prompt(const MoveMaker &move_maker) {
+void print_prompt(const Move_maker &move_maker) {
     cout << "Player " << move_maker.get_current_player() << "\'s turn. ";
     cout << "Enter your move: ";
 }
@@ -138,7 +140,9 @@ inline void print_quit(const string &log_name, bool write_log) {
         cout << "Your game log has been saved to: " << log_name << '\n';
 }
 
-////////// BEGIN ERROR MESSAGES //////////
+/*
+Error messages
+*/
 
 void invalid_log_name_msg(const string &log_name) {
     cerr << "Invalid log name: " << log_name << ".\n";
@@ -149,7 +153,9 @@ void invalid_input_msg() {
     cerr << "Invalid input -- try again. Enter \"help\" for instructions.\n";
 }
 
-////////// BEGIN PARSE FUNCTIONS //////////
+/*
+Parse functions
+*/
 
 // REQUIRES input is of format: [a-h][1-8] [a-h][1-8]
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos) {
@@ -179,7 +185,9 @@ int parse_col_label(const char col_label) {
     return itr->second;
 }
 
-////////// BEGIN LOGGING FUNCTIONS //////////
+/*
+Logging functions
+*/
 
 // REQUIRES ofs if open
 // MODIFIES ofs
@@ -196,7 +204,7 @@ void log_move(ofstream &ofs, const Tile &old_pos, const Tile &new_pos,
 // REQUIRES ofs is open
 // MODIFIES ofs
 // EFFECTS  Write board final layout to log
-void log_board_layout(ofstream &ofs, const MoveMaker &move_maker) {
+void log_board_layout(ofstream &ofs, const Move_maker &move_maker) {
     assert(ofs.is_open());
     ofs << "quit\n\nEnd State:\n";
     move_maker.print_board(ofs);

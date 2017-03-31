@@ -10,8 +10,6 @@
 #include "Player.h"
 #include "Tile.h"
 
-#include <cassert>
-
 class Piece {
 public:
     explicit Piece(const Player color = Player::WHITE, const Tile &pos = Tile())
@@ -44,14 +42,14 @@ public:
     //          the way.
     virtual bool valid_placement(const Tile &new_pos) const = 0;
 
+    // Output operator overloads
+    friend std::ostream &operator<<(std::ostream &os, const Piece::PieceType pt);
+    friend std::ostream &operator<<(std::ostream &os, const Piece *p);
+
 private:
     Player color_;
     int row_;
     int col_;
 };
-
-std::ostream &operator<<(std::ostream &os, const Piece::PieceType pt);
-
-std::ostream &operator<<(std::ostream &os, const Piece *p);
 
 #endif  // !PIECE_H

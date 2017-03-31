@@ -10,6 +10,10 @@
 
 using std::abs;
 
+/*
+Pawn public members
+*/
+
 bool Pawn::valid_capture_placement(const Tile &new_pos) const {
     const int row_diff = new_pos.row - get_row();
     const int col_abs_diff = abs(new_pos.col - get_col());

@@ -21,13 +21,15 @@ using std::cerr; using std::ostream;
 static const Tile P1_KING_START{ 0, 4 };
 static const Tile P2_KING_START{ 7, 4 };
 
-////////// BEGIN PUBLIC FUNCTIONS //////////
+/*
+Move_maker public members
+*/
 
-MoveMaker::MoveMaker(Board *board_ptr)
+Move_maker::Move_maker(Board *board_ptr)
     : board_{ board_ptr }, p1_king_{ P1_KING_START }, p2_king_{ P2_KING_START },
     last_en_passant_pos_{ Tile{} }, turn_{ Player::WHITE }, en_passant_{ false } {}
 
-bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
+bool Move_maker::make_move(const Tile &old_pos, const Tile& new_pos) {
     if (!valid_move(old_pos, new_pos)) {
         cerr << ">>> Invalid move. Try again! <<<\n";
         return false;
@@ -80,19 +82,21 @@ bool MoveMaker::make_move(const Tile &old_pos, const Tile& new_pos) {
     return true;
 }
 
-void MoveMaker::print_board(ostream &os) const {
+void Move_maker::print_board(ostream &os) const {
     os << *board_;
 }
 
-////////// BEGIN PRIVATE FUNCTIONS //////////
+/*
+Move_maker private members
+*/
 
-void MoveMaker::capture_en_passant_pawn() {
+void Move_maker::capture_en_passant_pawn() {
     Piece *&target_tile = board_->get_tile(last_en_passant_pos_);
     delete target_tile;
     target_tile = nullptr;
 }
 
-bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
+bool Move_maker::collision(const Tile &old_pos, const Tile &new_pos,
     const Direction &direction) const {
     Tile current_tile = old_pos;
     int vert_mvmt, horiz_mvmt;
@@ -143,14 +147,14 @@ bool MoveMaker::collision(const Tile &old_pos, const Tile &new_pos,
     return false;
 }
 
-void MoveMaker::set_king_pos(const King *king) {
+void Move_maker::set_king_pos(const King *king) {
     if (king->get_player() == Player::WHITE)
         p1_king_ = king->get_pos();
     else
         p2_king_ = king->get_pos();
 }
 
-void MoveMaker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
+void Move_maker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
     // lambda to move rook to castled position
     static auto move_rook_to_castled = [&](int rook_col, 
         int castled_col) {
@@ -169,7 +173,7 @@ void MoveMaker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
         move_rook_to_castled(Board::kLeftRookInitCol, Board::kLeftRookCastledCol);
 }
 
-bool MoveMaker::valid_castle(const King *king, const Tile &new_pos) const {
+bool Move_maker::valid_castle(const King *king, const Tile &new_pos) const {
     if (king->has_moved()) {
         return false;  // Can't castle if already moved
     }
@@ -200,7 +204,7 @@ bool MoveMaker::valid_castle(const King *king, const Tile &new_pos) const {
     return false;
 }
 
-bool MoveMaker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
+bool Move_maker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
     if (!(board_->tile_in_bounds(new_pos) && board_->tile_in_bounds(old_pos))) {
         cerr << "Input tile is out of bounds\n";
         return false;
