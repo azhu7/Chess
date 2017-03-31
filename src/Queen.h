@@ -11,21 +11,21 @@
 
 class Queen : public LinearPiece {
 public:
-    explicit Queen(const Player color = Player::WHITE, const Tile &pos = Tile())
-        : LinearPiece{ color, pos } {}
+    explicit Queen(Player color_, Tile pos_)
+        : LinearPiece{ color_, pos_ } {}
 
     // Inherited from Piece base class
     PieceType get_type() const override { return Q; };
 
     // Inherited from Piece base class
-    bool valid_placement(const Tile &new_pos) const override {
+    bool valid_placement(Tile new_pos) const override {
         const Tile cur_pos = get_pos();
         return (diagonal_path(cur_pos, new_pos) || horizontal_path(cur_pos, new_pos) ||
             vertical_path(cur_pos, new_pos)) && cur_pos != new_pos;
     }
 
     // Inherited from LinearPiece class
-    Direction get_direction(const Tile &new_pos) const override;
+    Direction get_direction(Tile new_pos) const override;
 };
 
 #endif  // !QUEEN_H

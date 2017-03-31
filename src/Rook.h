@@ -11,26 +11,26 @@
 
 class Rook : public LinearPiece {
 public:
-    explicit Rook(const Player color = Player::WHITE, const Tile &pos = Tile())
-        : LinearPiece{ color, pos }, has_moved_{ false } {}
+    explicit Rook(Player color_, Tile pos_)
+        : LinearPiece{ color_, pos_ }, moved{ false } {}
 
-    bool has_moved() const { return has_moved_; }
+    bool has_moved() const { return moved; }
 
     // Can only set to true because can't "un-move"
-    void set_moved() { has_moved_ = true; }
+    void set_moved() { moved = true; }
 
     // Inherited from Piece base class
     PieceType get_type() const override { return R; };
 
     // Inherited from Piece base class
-    bool valid_placement(const Tile &new_pos) const override {
+    bool valid_placement(Tile new_pos) const override {
         const Tile cur_pos = get_pos();
         return (horizontal_path(cur_pos, new_pos) || vertical_path(cur_pos, new_pos)) &&
             cur_pos != new_pos;
     }
 
     // Inherited from LinearPiece class
-    Direction get_direction(const Tile &new_pos) const override {
+    Direction get_direction(Tile new_pos) const override {
         // Move horizontally
         if (new_pos.row == get_row())
             return new_pos.col > get_col() ? E : W;
@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    bool has_moved_;
+    bool moved;
 };
 
 #endif  // !ROOK_H

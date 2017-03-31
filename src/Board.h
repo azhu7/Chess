@@ -31,20 +31,20 @@ public:
 
     // REQUIRES pos is valid tile
     // EFFECTS  Return const Piece pointer at specified tile
-    const Piece *get_tile(const Tile &pos) const {
+    const Piece *get_tile(Tile pos) const {
         assert(tile_in_bounds(pos));
         return board_[pos.row][pos.col];
     }
 
     // REQUIRES pos is valid tile
     // EFFECTS  Return reference to Piece pointer at specified tile
-    Piece *&get_tile(const Tile &pos) {
+    Piece *&get_tile(Tile pos) {
         assert(tile_in_bounds(pos));
         return board_[pos.row][pos.col];
     }
 
     // EFFECTS  Determine if tile is valid
-    bool tile_in_bounds(const Tile &pos) const {
+    bool tile_in_bounds(Tile pos) const {
         return pos.col >= 0 && (pos.col < kNumCols) &&
             (pos.row >= 0) && (pos.row < kNumRows);
     }
@@ -52,7 +52,7 @@ public:
     // REQUIRES old_pos and new_pos are valid tiles
     // MODIFIES board_
     // EFFECTS  Move piece to new tile
-    void move(const Tile &old_pos, const Tile &new_pos) {
+    void move(Tile old_pos, Tile new_pos) {
         set_tile(new_pos, get_tile(old_pos));  // Move piece
         set_tile(old_pos, nullptr);  // old_pos is empty now
     }
@@ -80,7 +80,7 @@ private:
 
     // MODIFIES board_
     // EFFECTS  Places piece on board_ at specified tile
-    void set_tile(const Tile &pos, Piece *piece) { get_tile(pos) = piece; }
+    void set_tile(Tile pos, Piece *piece) { get_tile(pos) = piece; }
 
     // MODIFIES board_
     // EFFECTS  Places pawns on board during initialization

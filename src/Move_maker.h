@@ -21,32 +21,28 @@ class King;
 //          MoveMaker move_maker{ board };
 class Move_maker {
 public:
-    explicit Move_maker(Board *board);
-    Move_maker(const Move_maker &) = delete;
-    Move_maker &operator=(const Move_maker &) = delete;
-    Move_maker(Move_maker &&) = delete;
-    Move_maker &operator=(Move_maker &&) = delete;
+    explicit Move_maker(Board *board_);
     ~Move_maker() {}
 
     // EFFECTS  Return current player
-    const Player &get_current_player() const { return turn_; }
+    const Player &get_current_player() const { return turn; }
 
     // MODIFIES board_
     // EFFECTS  Move piece to new tile if valid move, otherwise return false
     //*** TODO     Update to return different enum codes?
-    bool make_move(const Tile &old_pos, const Tile &new_pos);
+    bool make_move(Tile old_pos, Tile new_pos);
 
     void print_board(std::ostream &os) const;
 
 private:
     using Direction = LinearPiece::Direction;
-    Board *board_;
-    Tile p1_king_;  // Track each player's king to help with check detection
-    Tile p2_king_;
-    Tile last_en_passant_pos_;  // Track tile of pawn that moved two ranks last move. 
+    Board *board;
+    Tile p1_king;  // Track each player's king to help with check detection
+    Tile p2_king;
+    Tile last_en_passant_pos;  // Track tile of pawn that moved two ranks last move. 
                                 // {-1, -1} if none.
-    Player turn_;
-    mutable bool en_passant_;  // True if current move is an en_passant. Used to
+    Player turn;
+    mutable bool en_passant;  // True if current move is an en_passant. Used to
                               // communicate between valid_move() and make_move()
     //Player checked_;  // Player whose King is under attack
                         // Check detection not yet implemented
@@ -54,7 +50,7 @@ private:
     // MODIFIES turn_
     // EFFECTS  Updates whose turn it is. Called by make_move()
     void switch_turns() {
-        turn_ = turn_ == Player::WHITE ? Player::BLACK : Player::WHITE;
+        turn = turn == Player::WHITE ? Player::BLACK : Player::WHITE;
     }
 
     // MODIFIES board_
@@ -63,8 +59,7 @@ private:
 
     // REQUIRES Straight path from current pos to new_pos
     // EFFECTS  Check for any pieces between old_pos and new_pos
-    bool collision(const Tile &old_pos, const Tile &new_pos, 
-        const Direction &direction) const;
+    bool collision(Tile old_pos, Tile new_pos, Direction direction) const;
 
     // MODIFIES p1_king or p2_king depending on which player king belongs to
     // EFFECTS  Update the king's position as tracked by MoveMaker
@@ -72,15 +67,15 @@ private:
 
     // MODIFIES rook, board_
     // EFFECTS  Moves rook to correct castle position. Called by make_move()
-    void castle_update_rook(const Tile &old_pos, const Tile &new_pos);
+    void castle_update_rook(Tile old_pos, Tile new_pos);
 
     // REQUIRES cur_pos is coordinate of a King piece
     // EFFECTS  Check if king can castle to new_pos
-    bool valid_castle(const King *king, const Tile &new_pos) const;
+    bool valid_castle(const King *king, Tile new_pos) const;
 
     // EFFECTS  Determine if piece can be moved to new tile.
     //          Make sure piece moves according to Chess rules.
-    bool valid_move(const Tile &old_pos, const Tile &new_pos) const;
+    bool valid_move(Tile old_pos, Tile new_pos) const;
 
     // EFFECTS  Upon a successful move, detect any checks
     //*** TODO     Accomplish by checking around King?

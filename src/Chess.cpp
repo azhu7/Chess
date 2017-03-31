@@ -43,7 +43,7 @@ void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
 int parse_col_label(const char col_label);
 
 // Logging Functions
-void log_move(ofstream &ofs, const Tile &old_pos, const Tile &new_pos, 
+void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, 
     const Player player, const bool valid_move);
 void log_board_layout(ofstream &ofs, const Move_maker &move_maker);
 

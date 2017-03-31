@@ -10,17 +10,18 @@
 #include <iosfwd>
 
 struct Tile {
-    explicit Tile(int row = -1, int col = -1)
-        : row{ row }, col{ col } {}
+    explicit Tile(int row_ = -1, int col_ = -1)
+        : row{ row_ }, col{ col_ } {}
     ~Tile() {}
-    bool operator==(const Tile &rhs) const {
+
+    bool operator==(Tile rhs) const {
         return row == rhs.row && col == rhs.col;
     }
-    bool operator!=(const Tile &rhs) const {
+    bool operator!=(Tile rhs) const {
         return !(*this == rhs);
     }
     
-    friend std::ostream &operator<<(std::ostream &os, const Tile &pos);
+    friend std::ostream &operator<<(std::ostream &os, Tile pos);
 
     int row;
     int col;

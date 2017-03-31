@@ -25,35 +25,35 @@ static const Tile P2_KING_START{ 7, 4 };
 Move_maker public members
 */
 
-Move_maker::Move_maker(Board *board_ptr)
-    : board_{ board_ptr }, p1_king_{ P1_KING_START }, p2_king_{ P2_KING_START },
-    last_en_passant_pos_{ Tile{} }, turn_{ Player::WHITE }, en_passant_{ false } {}
+Move_maker::Move_maker(Board *board_)
+    : board{ board_ }, p1_king{ P1_KING_START }, p2_king{ P2_KING_START },
+    last_en_passant_pos{ Tile{} }, turn{ Player::WHITE }, en_passant{ false } {}
 
-bool Move_maker::make_move(const Tile &old_pos, const Tile& new_pos) {
+bool Move_maker::make_move(Tile old_pos, Tile new_pos) {
     if (!valid_move(old_pos, new_pos)) {
         cerr << ">>> Invalid move. Try again! <<<\n";
         return false;
     }
 
-    Piece *cur_piece = board_->get_tile(old_pos);
-    if (Piece *&target_tile = board_->get_tile(new_pos)) {
+    Piece *cur_piece = board->get_tile(old_pos);
+    if (Piece *&target_tile = board->get_tile(new_pos)) {
         // Capture enemy piece
-        assert(target_tile->get_player() != turn_);  // Make sure enemy piece
+        assert(target_tile->get_player() != turn);  // Make sure enemy piece
         delete target_tile;
         target_tile = nullptr;
     }
 
     // Account for en passant capture
-    if (en_passant_)
+    if (en_passant)
         capture_en_passant_pawn();
-    last_en_passant_pos_ = Tile{};  // Reset en passant tile
+    last_en_passant_pos = Tile{};  // Reset en passant tile
 
     switch (cur_piece->get_type()) {
     case Piece::P: {
         // Check if pawn is moving two tiles. Needed for possible en passant.
         bool two_rank_move = abs(new_pos.row - old_pos.row) == 2 && new_pos.col == old_pos.col;
         if (two_rank_move)
-            last_en_passant_pos_ = new_pos;
+            last_en_passant_pos = new_pos;
         break;
     }
     case Piece::R: {
@@ -74,16 +74,16 @@ bool Move_maker::make_move(const Tile &old_pos, const Tile& new_pos) {
         break;
     }  // switch
 
-    en_passant_ = false;
+    en_passant = false;
     cur_piece->set_pos(new_pos);  // Update piece coordinates
-    board_->move(old_pos, new_pos);  // Move piece
-    assert(!board_->get_tile(old_pos));  // Old tile should contain nullptr
+    board->move(old_pos, new_pos);  // Move piece
+    assert(!board->get_tile(old_pos));  // Old tile should contain nullptr
     switch_turns();  // Switch turns upon successful move
     return true;
 }
 
 void Move_maker::print_board(ostream &os) const {
-    os << *board_;
+    os << *board;
 }
 
 /*
@@ -91,7 +91,7 @@ Move_maker private members
 */
 
 void Move_maker::capture_en_passant_pawn() {
-    Piece *&target_tile = board_->get_tile(last_en_passant_pos_);
+    Piece *&target_tile = board->get_tile(last_en_passant_pos);
     delete target_tile;
     target_tile = nullptr;
 }
@@ -138,7 +138,7 @@ bool Move_maker::collision(const Tile &old_pos, const Tile &new_pos,
     current_tile.col += horiz_mvmt;
     // Scan for collisions
     while (current_tile != new_pos) {
-        if (board_->get_tile(current_tile))
+        if (board->get_tile(current_tile))
             return true;
         // Move in specified direction
         current_tile.row += vert_mvmt;
@@ -149,9 +149,9 @@ bool Move_maker::collision(const Tile &old_pos, const Tile &new_pos,
 
 void Move_maker::set_king_pos(const King *king) {
     if (king->get_player() == Player::WHITE)
-        p1_king_ = king->get_pos();
+        p1_king = king->get_pos();
     else
-        p2_king_ = king->get_pos();
+        p2_king = king->get_pos();
 }
 
 void Move_maker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
@@ -160,8 +160,8 @@ void Move_maker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
         int castled_col) {
         const Tile rook_pos{ old_pos.row, rook_col };
         const Tile castled_pos{ old_pos.row, castled_col };
-        Rook *temp_rook = static_cast<Rook *>(board_->get_tile(rook_pos));
-        board_->move(rook_pos, castled_pos);
+        Rook *temp_rook = static_cast<Rook *>(board->get_tile(rook_pos));
+        board->move(rook_pos, castled_pos);
         temp_rook->set_moved();
     };
 
@@ -185,7 +185,7 @@ bool Move_maker::valid_castle(const King *king, const Tile &new_pos) const {
         const Direction direction) {
         // Check corner for rook
         const Tile rook_tile{ cur_pos.row, rook_col };
-        const Piece *temp_piece = board_->get_tile(rook_tile);
+        const Piece *temp_piece = board->get_tile(rook_tile);
         if (temp_piece->get_type() == Piece::R) {
             const Rook *temp_rook = static_cast<const Rook *>(temp_piece);
             // Check that rook has not moved and no horizontal collision to the right
@@ -205,18 +205,18 @@ bool Move_maker::valid_castle(const King *king, const Tile &new_pos) const {
 }
 
 bool Move_maker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
-    if (!(board_->tile_in_bounds(new_pos) && board_->tile_in_bounds(old_pos))) {
+    if (!(board->tile_in_bounds(new_pos) && board->tile_in_bounds(old_pos))) {
         cerr << "Input tile is out of bounds\n";
         return false;
     }
 
-    const Piece *cur_piece = board_->get_tile(old_pos);
-    const Piece *new_tile = board_->get_tile(new_pos);
+    const Piece *cur_piece = board->get_tile(old_pos);
+    const Piece *new_tile = board->get_tile(new_pos);
     if (!cur_piece)
         return false;  // Player selected empty tile
 
     // Players move their own pieces
-    if (cur_piece->get_player() != turn_) {
+    if (cur_piece->get_player() != turn) {
         cerr << "Can't move enemy piece\n";
         return false;
     }
@@ -236,27 +236,27 @@ bool Move_maker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
     switch (cur_piece->get_type()) {
     case Piece::P: {
         // Pawn capture different than move
-        const Piece *target_tile = board_->get_tile(new_pos);
+        const Piece *target_tile = board->get_tile(new_pos);
         if (okay_placement) {
             okay_placement = !target_tile;  // If vertical move, make sure target spot is empty
             if (abs(new_pos.row - old_pos.row) == 2) {
                 // Check tile one above/below pawn
                 Tile one_tile_away{ (old_pos.row + new_pos.row) / 2, old_pos.col };
                 // Both tiles clear
-                okay_placement = okay_placement && !board_->get_tile(one_tile_away);
+                okay_placement = okay_placement && !board->get_tile(one_tile_away);
             }
         }
         else {
             // Otherwise, check if pawn is capturing an enemy piece
             const Pawn *temp_pawn = static_cast<const Pawn *>(cur_piece);
             Tile en_passant_tile{ old_pos.row, new_pos.col };
-            bool possible_en_passant = last_en_passant_pos_ == en_passant_tile;
+            bool possible_en_passant = last_en_passant_pos == en_passant_tile;
             // Captured a piece if target tile contains enemy piece OR valid en passant
-            bool captured_a_piece = (target_tile && target_tile->get_player() != turn_) ||
+            bool captured_a_piece = (target_tile && target_tile->get_player() != turn) ||
                 possible_en_passant;
             okay_placement = temp_pawn->valid_capture_placement(new_pos) &&
                 captured_a_piece;
-            en_passant_ = okay_placement && possible_en_passant;
+            en_passant = okay_placement && possible_en_passant;
         }
         break;
     }

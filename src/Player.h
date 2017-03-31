@@ -15,6 +15,6 @@ enum class Player : char {
 };
 
 // Print Player as char value
-std::ostream &operator<<(std::ostream &os, const Player p);
+std::ostream &operator<<(std::ostream &os, Player p);
 
 #endif  // !PLAYER_H
