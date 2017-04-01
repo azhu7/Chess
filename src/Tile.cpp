@@ -10,6 +10,6 @@
 
 using std::ostream;
 
-ostream &operator<<(ostream &os, const Tile &pos) {
+ostream &operator<<(ostream &os, Tile pos) {
     return os << (char)(pos.col + 'a') << pos.row + 1;
 }

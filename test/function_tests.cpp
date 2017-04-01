@@ -1,7 +1,7 @@
-#include "bishop.h"
-#include "queen.h"
-#include "knight.h"
-#include "king.h"
+#include "../src/Bishop.h"
+#include "../src/Queen.h"
+#include "../src/Knight.h"
+#include "../src/King.h"
 #include <iostream>
 #include <cassert>
 
@@ -11,14 +11,14 @@ void bishop_valid_placement_test();
 void queen_valid_placement_test();
 void knight_valid_placement_test();
 
-/*int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     cout << "Begin testing.\n";
     bishop_valid_placement_test();
     queen_valid_placement_test();
     knight_valid_placement_test();
     cout << "All tests passed!\n";
     return 0;
-}*/
+}
 
 // Simple test for Bishop::valid_placement
 void bishop_valid_placement_test() {

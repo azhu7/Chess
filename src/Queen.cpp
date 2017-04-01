@@ -10,7 +10,7 @@
 Queen public members
 */
 
-LinearPiece::Direction Queen::get_direction(const Tile &new_pos) const {
+LinearPiece::Direction Queen::get_direction(Tile new_pos) const {
     const Tile cur_pos = get_pos();
     // Move upwards (N)
     if (new_pos.row > cur_pos.row) {

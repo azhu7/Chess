@@ -40,11 +40,11 @@ void invalid_input_msg();
 
 // Parse Functions
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
-int parse_col_label(const char col_label);
+int parse_col_label(char col_label);
 
 // Logging Functions
-void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, 
-    const Player player, const bool valid_move);
+void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player, 
+    bool valid_move);
 void log_board_layout(ofstream &ofs, const Move_maker &move_maker);
 
 int main(int argc, char *argv[]) {
@@ -169,7 +169,7 @@ void parse_move(const string &input, Tile &old_pos, Tile &new_pos) {
 // REQUIRES col_label is [a-h]
 // EFFECTS  Return respective column number
 //          Throws exception if col_label is a valid label
-int parse_col_label(const char col_label) {
+int parse_col_label(char col_label) {
     static const unordered_map<char, int> col_labels{
         { 'a', 0 },
         { 'b', 1 },
@@ -192,8 +192,8 @@ Logging functions
 // REQUIRES ofs if open
 // MODIFIES ofs
 // EFFECTS  Write move to log
-void log_move(ofstream &ofs, const Tile &old_pos, const Tile &new_pos,
-    const Player player, const bool valid_move) {
+void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player, 
+    bool valid_move) {
     assert(ofs.is_open());
     ofs << old_pos << " " << new_pos << "\t// " << player;
     if (!valid_move)

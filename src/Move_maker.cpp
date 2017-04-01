@@ -96,8 +96,8 @@ void Move_maker::capture_en_passant_pawn() {
     target_tile = nullptr;
 }
 
-bool Move_maker::collision(const Tile &old_pos, const Tile &new_pos,
-    const Direction &direction) const {
+bool Move_maker::collision(Tile old_pos, Tile new_pos,
+    Direction direction) const {
     Tile current_tile = old_pos;
     int vert_mvmt, horiz_mvmt;
 
@@ -154,7 +154,7 @@ void Move_maker::set_king_pos(const King *king) {
         p2_king = king->get_pos();
 }
 
-void Move_maker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
+void Move_maker::castle_update_rook(Tile old_pos, Tile new_pos) {
     // lambda to move rook to castled position
     static auto move_rook_to_castled = [&](int rook_col, 
         int castled_col) {
@@ -173,7 +173,7 @@ void Move_maker::castle_update_rook(const Tile &old_pos, const Tile &new_pos) {
         move_rook_to_castled(Board::kLeftRookInitCol, Board::kLeftRookCastledCol);
 }
 
-bool Move_maker::valid_castle(const King *king, const Tile &new_pos) const {
+bool Move_maker::valid_castle(const King *king, Tile new_pos) const {
     if (king->has_moved()) {
         return false;  // Can't castle if already moved
     }
@@ -204,7 +204,7 @@ bool Move_maker::valid_castle(const King *king, const Tile &new_pos) const {
     return false;
 }
 
-bool Move_maker::valid_move(const Tile &old_pos, const Tile &new_pos) const {
+bool Move_maker::valid_move(Tile old_pos, Tile new_pos) const {
     if (!(board->tile_in_bounds(new_pos) && board->tile_in_bounds(old_pos))) {
         cerr << "Input tile is out of bounds\n";
         return false;

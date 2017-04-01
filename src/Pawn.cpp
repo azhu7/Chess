@@ -14,7 +14,7 @@ using std::abs;
 Pawn public members
 */
 
-bool Pawn::valid_capture_placement(const Tile &new_pos) const {
+bool Pawn::valid_capture_placement(Tile new_pos) const {
     const int row_diff = new_pos.row - get_row();
     const int col_abs_diff = abs(new_pos.col - get_col());
 
@@ -24,7 +24,7 @@ bool Pawn::valid_capture_placement(const Tile &new_pos) const {
         row_diff == -1);
 }
 
-bool Pawn::valid_placement(const Tile &new_pos) const {
+bool Pawn::valid_placement(Tile new_pos) const {
     const int row_diff = new_pos.row - get_row();
     const int col_diff = new_pos.col - get_col();
 

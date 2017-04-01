@@ -20,7 +20,8 @@ public:
     // Inherited from Piece base class
     bool valid_placement(Tile new_pos) const override {
         const Tile cur_pos = get_pos();
-        return (diagonal_path(cur_pos, new_pos) || horizontal_path(cur_pos, new_pos) ||
+        return (diagonal_path(cur_pos, new_pos) || 
+            horizontal_path(cur_pos, new_pos) ||
             vertical_path(cur_pos, new_pos)) && cur_pos != new_pos;
     }
 
