@@ -17,16 +17,14 @@ public:
     // Inherited from Piece base class
     PieceType get_type() const override { return Q; };
 
+protected:
     // Inherited from Piece base class
-    bool valid_placement(Tile new_pos) const override {
+    bool valid_physical_placement(Tile new_pos) const override {
         const Tile cur_pos = get_pos();
-        return (diagonal_path(cur_pos, new_pos) || 
+        return (diagonal_path(cur_pos, new_pos) ||
             horizontal_path(cur_pos, new_pos) ||
             vertical_path(cur_pos, new_pos)) && cur_pos != new_pos;
     }
-
-    // Inherited from LinearPiece class
-    Direction get_direction(Tile new_pos) const override;
 };
 
 #endif  // !QUEEN_H

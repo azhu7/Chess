@@ -21,12 +21,14 @@ public:
     // Inherited from Piece base class
     PieceType get_type() const override { return P; }
 
-    // EFFECTS  Determine if move is valid capture placement (one tile forward
-    //          diagonal)
-    bool valid_capture_placement(Tile new_pos) const;
-
+protected:
     // Inherited from Piece base class
-    bool valid_placement(Tile new_pos) const override;
+    bool valid_physical_placement(Tile new_pos) const override;
+    bool additional_placement_checks(bool valid_physical_placement,
+        Tile new_pos) const override;
+
+    // Determine if move is valid capture placement (one tile forward diagonal)
+    bool valid_capture_placement(Tile new_pos) const;
 };
 
 #endif  // !PAWN_H

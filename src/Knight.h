@@ -17,18 +17,13 @@ public:
     // Inherited from Piece base class
     PieceType get_type() const override { return N; };
 
-    // Inherited from Piece base class
-    bool valid_placement(Tile new_pos) const override {
-        return l_shape_move(new_pos);
-    }
-
 private:
-    // EFFECTS  Return true if l-shaped path from old pos to new pos
-    //          Used by Knight
-    bool l_shape_move(Tile new_pos) const {
+    // Inherited from Piece base class
+    // Return true if L-shaped path from old pos to new pos
+    bool valid_physical_placement(Tile new_pos) const override {
         const int row_abs_diff = abs(new_pos.row - get_row());
         const int col_abs_diff = abs(new_pos.col - get_col());
-        return (row_abs_diff == 1 && col_abs_diff == 2) || 
+        return (row_abs_diff == 1 && col_abs_diff == 2) ||
             (row_abs_diff == 2 && col_abs_diff == 1);
     }
 };

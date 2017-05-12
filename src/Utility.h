@@ -10,6 +10,8 @@
 #include <exception>
 #include <ios>
 
+struct Tile;
+
 class Error : public std::exception {
 public:
     Error(const char *msg_) : msg{ msg_ } {}
@@ -18,5 +20,13 @@ public:
 private:
     const char *msg;
 };
+
+enum class Direction {
+    N, S, E, W, NE, NW, SE, SW
+};
+
+// REQUIRES Straight path from current pos to new_pos
+// EFFECTS  Check for any pieces between old_pos and new_pos
+bool collision(Tile old_pos, Tile new_pos, Direction direction);
 
 #endif  // !UTILITY_H

@@ -11,8 +11,11 @@
 
 class King : public Piece {
 public:
+    static const Tile P1_KING_START;
+    static const Tile P2_KING_START;
+
     explicit King(Player color_, Tile pos_)
-        : Piece{ color_, pos_ }, moved{ false } {}
+        : Piece{ color_, pos_ } {}
 
     bool has_moved() const { return moved; }
 
@@ -22,15 +25,21 @@ public:
     // Inherited from Piece base class
     PieceType get_type() const override { return K; };
 
+protected:
     // Inherited from Piece base class
-    bool valid_placement(Tile new_pos) const override {
-        const int row_abs_diff = abs(new_pos.row - get_row());
-        const int col_abs_diff = abs(new_pos.col - get_col());
-        return row_abs_diff == 1 || col_abs_diff == 1;
+    bool valid_physical_placement(Tile new_pos) const override;
+
+    // Inherited from Piece base class
+    bool additional_placement_checks(bool okay_placement, 
+        Tile new_pos) const override {
+        return okay_placement ? okay_placement : valid_castle(new_pos);
     }
 
 private:
-    bool moved;  // Can only castle if !moved
+    bool moved = false;  // Can only castle if !moved
+
+    // Check if this King can castle to new_pos
+    bool valid_castle(Tile new_pos) const;
 };
 
 #endif  // !KING_H

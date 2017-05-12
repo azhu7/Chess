@@ -8,6 +8,9 @@
 #define BOARD_H
 
 #include "Piece.h"
+#include "Linear_piece.h"
+
+class King;
 
 #include <cassert>
 #include <iosfwd>
@@ -25,23 +28,31 @@ public:
     static const int kKingLeftCastledCol = 2;
     static const int kKingRightCastledCol = 6;
 
-    explicit Board(std::istream &is);
-    explicit Board();
-    ~Board();
+    // Get Meyers Singleton Model reference
+    static Board &get_instance();
+
+    Board(const Board &) = delete;
+    Board(Board &&) = delete;
+    Board &operator=(const Board &) = delete;
+    Board &operator=(Board &&) = delete;
 
     // REQUIRES pos is valid tile
     // EFFECTS  Return const Piece pointer at specified tile
     const Piece *get_tile(Tile pos) const {
         assert(tile_in_bounds(pos));
-        return board_[pos.row][pos.col];
+        return board[pos.row][pos.col];
     }
 
     // REQUIRES pos is valid tile
     // EFFECTS  Return reference to Piece pointer at specified tile
     Piece *&get_tile(Tile pos) {
         assert(tile_in_bounds(pos));
-        return board_[pos.row][pos.col];
+        return board[pos.row][pos.col];
     }
+
+    Player get_turn() const { return turn; }
+    Tile get_last_en_passant_pos() const { return last_en_passant_pos; }
+    void enpassant_occured() { en_passant = true; }
 
     // EFFECTS  Determine if tile is valid
     bool tile_in_bounds(Tile pos) const {
@@ -50,19 +61,16 @@ public:
     }
 
     // REQUIRES old_pos and new_pos are valid tiles
-    // MODIFIES board_
+    // MODIFIES board
     // EFFECTS  Move piece to new tile
-    void move(Tile old_pos, Tile new_pos) {
-        set_tile(new_pos, get_tile(old_pos));  // Move piece
-        set_tile(old_pos, nullptr);  // old_pos is empty now
-    }
+    bool move(Tile old_pos, Tile new_pos);
 
     // EFFECTS  Pretty print the board
     friend std::ostream &operator<<(std::ostream &os, const Board &board);
 
     // REQUIRES Valid initializing string format
-    // MODIFIES board_
-    // EFFECTS  Reads in, allocates, and places pieces on board_. Tiles read in
+    // MODIFIES board
+    // EFFECTS  Reads in, allocates, and places pieces on board. Tiles read in
     //          from A8 to H8, A7 to H7, ..., A0 to H0.
     //              "1P" places a white Pawn at the current tile
     //              "--" indicates an empty tile
@@ -72,23 +80,71 @@ public:
 private:
     static const int kNumRows = 8;
     static const int kNumCols = 8;
-    Piece *board_[kNumRows][kNumCols];  // 8x8 board of pointers to pieces
+    Piece *board[kNumRows][kNumCols];  // 8x8 board of pointers to pieces
+    Tile p1_king;  // Track each player's king to help with check detection
+    Tile p2_king;
+    Tile last_en_passant_pos;  // Track tile of pawn that moved two ranks last move. 
+                               // {-1, -1} if none.
+    Player turn;
+    bool en_passant;  // True if current move is an en_passant. Used to
+                              // communicate between valid_move() and make_move()
+    //Player checked_;  // Player whose King is under attack
+                        //*** Check detection not yet implemented
 
-    // MODIFIES board_
-    // EFFECTS  Fills board_ with nullptr
+    explicit Board();
+    explicit Board(std::istream &is);
+    // Singleton should not be destructed by user
+    ~Board();
+
+    // MODIFIES board
+    // EFFECTS  Fills board with nullptr
     void init_blank_board();
 
-    // MODIFIES board_
-    // EFFECTS  Places piece on board_ at specified tile
+    // MODIFIES board
+    // EFFECTS  Places piece on board at specified tile
     void set_tile(Tile pos, Piece *piece) { get_tile(pos) = piece; }
 
-    // MODIFIES board_
+    // MODIFIES board
     // EFFECTS  Places pawns on board during initialization
     void place_pawns();
 
-    // MODIFIES board_
+    // MODIFIES board
     // EFFECTS  Places non-pawn pieces on board during initialization
     void place_pieces();
+
+    // MODIFIES turn_
+    // EFFECTS  Updates whose turn it is. Called by make_move()
+    void switch_turns() {
+        turn = turn == Player::WHITE ? Player::BLACK : Player::WHITE;
+    }
+
+    //*** Ported from MoveMaker
+
+    // MODIFIES board_
+    // EFFECTS  Remove en passant pawn from board_
+    void capture_en_passant_pawn();
+
+    // MODIFIES p1_king or p2_king depending on which player king belongs to
+    // EFFECTS  Update the king's position as tracked by MoveMaker
+    void set_king_pos(King *king);
+
+    // MODIFIES rook, board_
+    // EFFECTS  Moves rook to correct castle position. Called by make_move()
+    void castle_update_rook(Tile old_pos, Tile new_pos);
+
+    // EFFECTS  Check if king can castle to new_pos
+    bool valid_castle(King *king, Tile new_pos) const;
+
+    // EFFECTS  Determine if piece can be moved to new tile.
+    //          Make sure piece moves according to Chess rules.
+    bool valid_move(Tile old_pos, Tile new_pos) const;
+
+    // EFFECTS  Upon a successful move, detect any checks
+    //*** TODO     Accomplish by checking around King?
+    bool detect_check() const;
+
+    // EFFECTS  Upon a check, detect checkmate
+    bool detect_checkmate() const;
 };
 
 #endif  // !BOARD_H

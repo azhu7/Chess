@@ -13,12 +13,10 @@
 *    Detect check, checkmate, get out of check, stalemate (may need hash for pieces)
 *    Clean up loops: 1-liners, definition conditions
 *    Change privates to no _ and ctor inputs to _
-*    No dynamic pieces???
 *    File for board layout, have board read it in?
 */
 
 #include "Board.h"
-#include "Move_maker.h"
 
 #include <fstream>
 #include <iostream>
@@ -31,7 +29,7 @@ using namespace std;
 // Print Functions
 void print_instructions();
 void print_intro();
-void print_prompt(const Move_maker &move_maker);
+void print_prompt();
 void print_quit(const string &log_name, bool write_log);
 
 // Error Messages
@@ -45,11 +43,9 @@ int parse_col_label(char col_label);
 // Logging Functions
 void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player, 
     bool valid_move);
-void log_board_layout(ofstream &ofs, const Move_maker &move_maker);
+void log_board_layout(ofstream &ofs);
 
 int main(int argc, char *argv[]) {
-    Board board;
-    Move_maker move_maker{ &board };
     regex move_format{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
     ofstream out_file;
     string log_name;
@@ -69,16 +65,16 @@ int main(int argc, char *argv[]) {
     print_intro();
 
     while (true) {
-        move_maker.print_board(cout);
+        cout << Board::get_instance();
         Tile old_pos, new_pos;
         bool valid_move = false;
         while (!valid_move) {
-            print_prompt(move_maker);  // Request input from user
+            print_prompt();  // Request input from user
             string input;
             if (getline(cin, input)) {
                 if (input.substr(0, 4) == "quit") {
                     if (write_log) {
-                        log_board_layout(out_file, move_maker);
+                        log_board_layout(out_file);
                         out_file.close();
                     }
                     print_quit(log_name, write_log);
@@ -88,11 +84,10 @@ int main(int argc, char *argv[]) {
                     print_instructions();
                 else if (regex_match(input.substr(0, 5), move_format)) {
                     parse_move(input, old_pos, new_pos);
-                    Player current_player = move_maker.get_current_player();
-                    valid_move = move_maker.make_move(old_pos, new_pos);
+                    valid_move = Board::get_instance().move(old_pos, new_pos);
                     if (write_log)
-                        log_move(out_file, old_pos, new_pos, current_player, 
-                            valid_move);
+                        log_move(out_file, old_pos, new_pos, 
+                            Board::get_instance().get_turn(), valid_move);
                 }
                 else
                     invalid_input_msg();
@@ -129,8 +124,8 @@ void print_intro() {
     cout << "Let's get started!\n\n";
 }
 
-void print_prompt(const Move_maker &move_maker) {
-    cout << "Player " << move_maker.get_current_player() << "\'s turn. ";
+void print_prompt() {
+    cout << "Player " << Board::get_instance().get_turn() << "\'s turn. ";
     cout << "Enter your move: ";
 }
 
@@ -204,8 +199,8 @@ void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player,
 // REQUIRES ofs is open
 // MODIFIES ofs
 // EFFECTS  Write board final layout to log
-void log_board_layout(ofstream &ofs, const Move_maker &move_maker) {
+void log_board_layout(ofstream &ofs) {
     assert(ofs.is_open());
     ofs << "quit\n\nEnd State:\n";
-    move_maker.print_board(ofs);
+    ofs << Board::get_instance();
 }

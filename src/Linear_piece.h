@@ -12,20 +12,22 @@
 
 #include <algorithm>
 
+enum class Direction : int;
+
 class LinearPiece : public Piece {
 public:
-    enum Direction {
-        N, S, E, W, NE, NW, SE, SW
-    };
+    explicit LinearPiece(Player color_, Tile pos_)
+        : Piece{ color_, pos_ } {}
 
     // REQUIRES Straight path from current pos to new_pos
     // EFFECTS  Determine relative direction to new_pos.
     //          Used to aid MoveMaker detect collision functions.
-    virtual Direction get_direction(Tile new_pos) const = 0;
+    Direction get_direction(Tile new_pos) const;
 
 protected:
-    explicit LinearPiece(Player color_, Tile pos_)
-        : Piece{ color_, pos_ } {}
+    // Inherited from Piece base class
+    bool additional_placement_checks(bool valid_physical_placement,
+        Tile new_pos) const override;
 
     // EFFECTS  Return true if horizontal path from old pos to new pos
     //          Used by Rook and Queen

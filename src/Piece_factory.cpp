@@ -10,14 +10,14 @@
 
 // Allocates and initializes piece based on supplied information. Throws error
 // on invalid type.
-Piece *create_piece(Player color, Tile pos, Piece::PieceType type) {
+Piece *create_piece(Player player, Tile pos, Piece::PieceType type) {
     switch (type) {
-    case Piece::P: return new Pawn{ color, pos };
-    case Piece::N: return new Knight{ color, pos };
-    case Piece::B: return new Bishop{ color, pos };
-    case Piece::R: return new Rook{ color, pos };
-    case Piece::Q: return new Queen{ color, pos };
-    case Piece::K: return new King{ color, pos };
+    case Piece::P: return new Pawn{ player, pos };
+    case Piece::N: return new Knight{ player, pos };
+    case Piece::B: return new Bishop{ player, pos };
+    case Piece::R: return new Rook{ player, pos };
+    case Piece::Q: return new Queen{ player, pos };
+    case Piece::K: return new King{ player, pos };
     }
     throw Error{ "Invalid Piece Type " + type + '\n' };
 }

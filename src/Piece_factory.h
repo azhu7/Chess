@@ -11,6 +11,6 @@
 
 // Allocates and initializes piece based on supplied information. Throws error
 // on invalid type.
-Piece *create_piece(Player color, Tile pos, Piece::PieceType type);
+Piece *create_piece(Player player, Tile pos, Piece::PieceType type);
 
 #endif  // !PIECE_FACTORY_H
