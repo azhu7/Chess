@@ -1,5 +1,5 @@
 # Chess (v1.7)
-Chess game implemented in C++
+Implemented Chess in C++, applying C++11 and C++14 features and Object Oriented design.  
 
 Dependencies:
 >g++-4.9 for &lt;regex&gt; support  
