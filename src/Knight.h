@@ -20,12 +20,7 @@ public:
 private:
     // Inherited from Piece base class
     // Return true if L-shaped path from old pos to new pos
-    bool valid_physical_placement(Tile new_pos) const override {
-        const int row_abs_diff = abs(new_pos.row - get_row());
-        const int col_abs_diff = abs(new_pos.col - get_col());
-        return (row_abs_diff == 1 && col_abs_diff == 2) ||
-            (row_abs_diff == 2 && col_abs_diff == 1);
-    }
+    bool valid_physical_placement(Tile new_pos) const override;
 };
 
 #endif  // !KNIGHT_H

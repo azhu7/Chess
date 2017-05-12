@@ -17,7 +17,8 @@ enum class Direction : int;
 class LinearPiece : public Piece {
 public:
     explicit LinearPiece(Player color_, Tile pos_)
-        : Piece{ color_, pos_ } {}
+        : Piece{ color_, pos_ } {
+    }
 
     // REQUIRES Straight path from current pos to new_pos
     // EFFECTS  Determine relative direction to new_pos.

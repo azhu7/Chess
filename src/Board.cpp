@@ -108,7 +108,7 @@ ostream &operator<<(ostream &os, const Board &board) {
             cur_tile.col = col;
             const Piece *cur_piece = board.get_tile(cur_tile);
             if (cur_piece) {
-                os << cur_piece;
+                os << *cur_piece;
             }
             else {
                 os << "--";

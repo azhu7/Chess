@@ -45,7 +45,7 @@ void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player,
     bool valid_move);
 void log_board_layout(ofstream &ofs);
 
-int main(int argc, char *argv[]) {
+int _main(int argc, char *argv[]) {
     regex move_format{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
     ofstream out_file;
     string log_name;

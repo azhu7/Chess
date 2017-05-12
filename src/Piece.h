@@ -40,7 +40,7 @@ public:
 
     // Output operator overloads
     friend std::ostream &operator<<(std::ostream &os, Piece::PieceType pt);
-    friend std::ostream &operator<<(std::ostream &os, Piece *p);
+    friend std::ostream &operator<<(std::ostream &os, const Piece &p);
 
 protected:
     // Determine if this Piece is physically allowed to move to new position.

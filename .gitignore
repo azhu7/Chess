@@ -11,3 +11,4 @@
 /.obj
 /bin
 /test/out.txt
+*.o

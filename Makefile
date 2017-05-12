@@ -46,7 +46,7 @@ debug: clean $(TARGET)
 
 # Build and run test executable
 test: $(TEST_EXE)
-$(TEST_EXE): $(TESTDIR)/function_tests.cpp $(SRCDIR)/Queen.cpp
+$(TEST_EXE): $(TESTDIR)/function_tests.cpp $(OBJECTS)
 	$(CC) $(CXXFLAGS) $^ -o $@
 	./$(TEST_EXE)
 
