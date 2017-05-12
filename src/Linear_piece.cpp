@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: May 11, 2017
+    Description: Implementation for abstract Linear_piece
+*/
+
 #include "Linear_piece.h"
 
 #include "Utility.h"

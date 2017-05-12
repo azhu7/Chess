@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: May 11, 2017
+    Description: Implementation for King piece
+*/
+
 #include "King.h"
 
 #include "Board.h"

@@ -2,7 +2,7 @@
 *  Author: Alexander Zhu
 *  Date Created: November 20, 2016
 *  Description: Driver class for Chess game
-*  Version: 1.7
+*  Version: 1.8
 *
 *  ***TODO:
 *    Promotions!!
@@ -29,8 +29,6 @@ using namespace std;
 // Print Functions
 void print_instructions();
 void print_intro();
-void print_prompt();
-void print_quit(const string &log_name, bool write_log);
 
 // Error Messages
 void invalid_log_name_msg(const string &log_name);
@@ -45,7 +43,7 @@ void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player,
     bool valid_move);
 void log_board_layout(ofstream &ofs);
 
-int _main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     regex move_format{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
     ofstream out_file;
     string log_name;
@@ -69,7 +67,8 @@ int _main(int argc, char *argv[]) {
         Tile old_pos, new_pos;
         bool valid_move = false;
         while (!valid_move) {
-            print_prompt();  // Request input from user
+            cout << "Player " << Board::get_instance().get_turn() << "\'s turn. ";
+            cout << "Enter your move: ";
             string input;
             if (getline(cin, input)) {
                 if (input.substr(0, 4) == "quit") {
@@ -77,7 +76,9 @@ int _main(int argc, char *argv[]) {
                         log_board_layout(out_file);
                         out_file.close();
                     }
-                    print_quit(log_name, write_log);
+                    cout << "Thanks for playing!\n";
+                    if (write_log)
+                        cout << "Your game log has been saved to: " << log_name << '\n';
                     return 0;
                 }
                 else if (input.substr(0, 4) == "help")
@@ -122,17 +123,6 @@ void print_intro() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin.clear();
     cout << "Let's get started!\n\n";
-}
-
-void print_prompt() {
-    cout << "Player " << Board::get_instance().get_turn() << "\'s turn. ";
-    cout << "Enter your move: ";
-}
-
-inline void print_quit(const string &log_name, bool write_log) {
-    cout << "Thanks for playing!\n";
-    if (write_log)
-        cout << "Your game log has been saved to: " << log_name << '\n';
 }
 
 /*

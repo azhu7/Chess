@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: May 11, 2017
+    Description: Implementation for Chess Utility
+*/
+
 #include "Utility.h"
 
 #include "Board.h"

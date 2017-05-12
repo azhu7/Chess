@@ -1,3 +1,9 @@
+/**
+    Author: Alexander Zhu
+    Date Created: April 12, 2017
+    Description: Implementation for Piece factory
+*/
+
 #include "Piece_factory.h"
 
 #include "Bishop.h"
