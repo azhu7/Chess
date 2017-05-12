@@ -12,6 +12,9 @@
 
 #include <cassert>
 #include <cmath>
+#include <memory>
+
+using std::shared_ptr; using std::dynamic_pointer_cast;
 
 const Tile King::P1_KING_START{ 0, 4 };
 const Tile King::P2_KING_START{ 7, 4 };
@@ -44,7 +47,7 @@ bool King::valid_castle(Tile new_pos) const {
         const Direction direction) {
         // Check corner for rook
         const Tile rook_tile{ cur_pos.row, rook_col };
-        if (Rook *rook = dynamic_cast<Rook *>(Board::get_instance().get_tile(rook_tile))) {
+        if (shared_ptr<Rook> rook = dynamic_pointer_cast<Rook>(Board::get_instance().get_tile(rook_tile))) {
             // Check that rook has not moved and no horizontal collision to the right
             return !(rook->has_moved() || collision(cur_pos, rook_tile, direction));
         }

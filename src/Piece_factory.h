@@ -7,10 +7,14 @@
 #ifndef PIECE_FACTORY_H
 #define PIECE_FACTORY_H
 
-#include "Piece.h"
+class Piece;
+struct Tile;
+enum class Player : char;
+
+#include <memory>
 
 // Allocates and initializes piece based on supplied information. Throws error
 // on invalid type.
-Piece *create_piece(Player player, Tile pos, char type);
+std::shared_ptr<Piece> create_piece(Player player, Tile pos, char type);
 
 #endif  // !PIECE_FACTORY_H

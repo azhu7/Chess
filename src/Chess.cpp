@@ -18,6 +18,8 @@
 
 #include "Board.h"
 
+#include "Utility.h"
+
 #include <fstream>
 #include <iostream>
 #include <regex>
@@ -27,12 +29,8 @@
 using namespace std;
 
 // Print Functions
-void print_instructions();
 void print_intro();
-
-// Error Messages
-void invalid_log_name_msg(const string &log_name);
-void invalid_input_msg();
+void print_instructions();
 
 // Parse Functions
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos);
@@ -41,7 +39,6 @@ int parse_col_label(char col_label);
 // Logging Functions
 void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player, 
     bool valid_move);
-void log_board_layout(ofstream &ofs);
 
 int main(int argc, char *argv[]) {
     regex move_format{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
@@ -52,7 +49,7 @@ int main(int argc, char *argv[]) {
         log_name = argv[1];
         out_file.open(log_name);
         if (!out_file.is_open()) {
-            invalid_log_name_msg(log_name);
+            cerr << "Invalid log name: " << log_name << ".\nExiting now.\n";
             return 1;
         }
         write_log = true;
@@ -67,31 +64,46 @@ int main(int argc, char *argv[]) {
         Tile old_pos, new_pos;
         bool valid_move = false;
         while (!valid_move) {
-            cout << "Player " << Board::get_instance().get_turn() << "\'s turn. ";
+            Player current_player = Board::get_instance().get_turn();
+            cout << "Player " << current_player << "\'s turn. ";
             cout << "Enter your move: ";
             string input;
             if (getline(cin, input)) {
                 if (input.substr(0, 4) == "quit") {
                     if (write_log) {
-                        log_board_layout(out_file);
+                        assert(out_file.is_open());
+                        out_file << "quit\n\nEnd State:\n" << Board::get_instance();
                         out_file.close();
+                        cout << "Game log has been saved to: " << log_name << '\n';
                     }
                     cout << "Thanks for playing!\n";
-                    if (write_log)
-                        cout << "Your game log has been saved to: " << log_name << '\n';
                     return 0;
                 }
                 else if (input.substr(0, 4) == "help")
                     print_instructions();
                 else if (regex_match(input.substr(0, 5), move_format)) {
                     parse_move(input, old_pos, new_pos);
-                    valid_move = Board::get_instance().move(old_pos, new_pos);
+                    try {
+                        Board::get_instance().move(old_pos, new_pos);
+                        valid_move = true;
+                    }
+                    catch (Error &e) {
+                        cout << e.what() << '\n';
+                    }
+                    catch (exception &e) {
+                        cout << e.what() << '\n';
+                        return 1;
+                    }
+                    catch (...) {
+                        cout << "Unknown exception!\n";
+                        return 1;
+                    }
                     if (write_log)
-                        log_move(out_file, old_pos, new_pos, 
-                            Board::get_instance().get_turn(), valid_move);
+                        log_move(out_file, old_pos, new_pos, current_player, 
+                            valid_move);
                 }
                 else
-                    invalid_input_msg();
+                    cerr << "Invalid input -- try again. Enter \"help\" for instructions.\n";
             }  // if
         }  // while
         cout << '\n';
@@ -102,16 +114,6 @@ int main(int argc, char *argv[]) {
 /*
 Print functions
 */
-
-void print_instructions() {
-    cout << " --------------------------------\n";
-    cout << "| Rules are standard chess rules.|\n";
-    cout << "| Usage:                         |\n";
-    cout << "|   Move: [a-h][1-8] [a-h][1-8]  |\n";
-    cout << "|   Show Instructions: help      |\n";
-    cout << "|   Quit: quit                   |\n";
-    cout << " --------------------------------\n";
-}
 
 void print_intro() {
     cout << "Hello! Welcome to chess.\n";
@@ -125,17 +127,14 @@ void print_intro() {
     cout << "Let's get started!\n\n";
 }
 
-/*
-Error messages
-*/
-
-void invalid_log_name_msg(const string &log_name) {
-    cerr << "Invalid log name: " << log_name << ".\n";
-    cerr << "Exiting now.\n";
-}
-
-void invalid_input_msg() {
-    cerr << "Invalid input -- try again. Enter \"help\" for instructions.\n";
+void print_instructions() {
+    cout << " --------------------------------\n";
+    cout << "| Rules are standard chess rules.|\n";
+    cout << "| Usage:                         |\n";
+    cout << "|   Move: [a-h][1-8] [a-h][1-8]  |\n";
+    cout << "|   Show Instructions: help      |\n";
+    cout << "|   Quit: quit                   |\n";
+    cout << " --------------------------------\n";
 }
 
 /*
@@ -184,13 +183,4 @@ void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player,
     if (!valid_move)
         ofs << " Invalid move";
     ofs << '\n';
-}
-
-// REQUIRES ofs is open
-// MODIFIES ofs
-// EFFECTS  Write board final layout to log
-void log_board_layout(ofstream &ofs) {
-    assert(ofs.is_open());
-    ofs << "quit\n\nEnd State:\n";
-    ofs << Board::get_instance();
 }

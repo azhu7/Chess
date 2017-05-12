@@ -28,7 +28,7 @@ e1 c1  // Invalid castle
 a2 a3
 quit
 
-end state:
+End State:
     a  b  c  d  e  f  g  h
 8 | 2R 2R -- -- -- -- -- 2K  | 8
 7 | 2P 2P 2P 2B 2B 2P 2P 2P  | 7

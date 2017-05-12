@@ -14,16 +14,18 @@
 #include "Rook.h"
 #include "Utility.h"
 
+using std::shared_ptr; using std::make_shared;
+
 // Allocates and initializes piece based on supplied information. Throws error
 // on invalid type.
-Piece *create_piece(Player player, Tile pos, char type) {
+shared_ptr<Piece> create_piece(Player player, Tile pos, char type) {
     switch (type) {
-    case 'P': return new Pawn{ player, pos };
-    case 'N': return new Knight{ player, pos };
-    case 'B': return new Bishop{ player, pos };
-    case 'R': return new Rook{ player, pos };
-    case 'Q': return new Queen{ player, pos };
-    case 'K': return new King{ player, pos };
+    case 'P': return make_shared<Pawn>(player, pos);
+    case 'N': return make_shared<Knight>(player, pos);
+    case 'B': return make_shared<Bishop>(player, pos);
+    case 'R': return make_shared<Rook>(player, pos);
+    case 'Q': return make_shared<Queen>(player, pos);
+    case 'K': return make_shared<King>(player, pos);
     }
     throw Error{ "Invalid Piece Type " + type + '\n' };
 }

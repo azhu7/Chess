@@ -9,6 +9,9 @@
 #include "Board.h"
 
 #include <cmath>
+#include <memory>
+
+using std::shared_ptr;
 
 /*
 Pawn public members
@@ -40,7 +43,7 @@ bool Pawn::valid_physical_placement(Tile new_pos) const {
     return row_diff == -1;
 }
 bool Pawn::additional_placement_checks(bool valid_physical_placement, Tile new_pos) const {
-    Piece *target_tile = Board::get_instance().get_tile(new_pos);
+    shared_ptr<Piece> target_tile = Board::get_instance().get_tile(new_pos);
     bool okay_placement;
     if (valid_physical_placement) {
         // Vertical move: make sure target path is empty

@@ -21,6 +21,7 @@
 
 using std::istream; using std::ostream; using std::cerr;
 using std::ifstream;
+using std::shared_ptr; using std::dynamic_pointer_cast; using std::static_pointer_cast;
 using std::string;
 
 // Helpers
@@ -37,23 +38,20 @@ Board &Board::get_instance() {
 }
 
 //*** TODO: Replace bool return with void. Throw exception on error.
-bool Board::move(Tile old_pos, Tile new_pos) {
-    if (!valid_move(old_pos, new_pos)) {
-        cerr << ">>> Invalid move. Try again! <<<\n";
-        return false;
-    }
+void Board::move(Tile old_pos, Tile new_pos) {
+    if (!valid_move(old_pos, new_pos))
+        throw Error{ "Invalid move. Try again!" };
 
-    Piece *cur_piece = get_tile(old_pos);
-    if (Piece *&target_tile = get_tile(new_pos)) {
+    shared_ptr<Piece> cur_piece = get_tile(old_pos);
+    if (shared_ptr<Piece> &target_tile = get_tile(new_pos)) {
         // Capture enemy piece
         assert(target_tile->get_player() != turn);  // Make sure enemy piece
-        delete target_tile;
         target_tile = nullptr;
     }
 
     // Account for en passant capture
     if (en_passant) {
-        capture_en_passant_pawn();
+        get_tile(last_en_passant_pos) = nullptr;
         en_passant = false;
     }
     // Account for castle
@@ -68,18 +66,18 @@ bool Board::move(Tile old_pos, Tile new_pos) {
     cur_piece->set_pos(new_pos);  // Update piece coordinates
     
     // Brief switch-on-type logic to update tracking variables
-    if (dynamic_cast<Pawn *>(cur_piece) && abs(new_pos.row - old_pos.row) == 2)
+    if (dynamic_pointer_cast<Pawn>(cur_piece) && abs(new_pos.row - old_pos.row) == 2)
         // Note that pawn is moving two tiles. Needed for possible en passant.
         last_en_passant_pos = new_pos;
-    else if (Rook *rook = dynamic_cast<Rook *>(cur_piece))
+    else if (shared_ptr<Rook> rook = dynamic_pointer_cast<Rook>(cur_piece))
         rook->set_moved();  // Rook has moved (can no longer castle on this side)
-    else if (King *king = dynamic_cast<King *>(cur_piece)) {
+    else if (shared_ptr<King> king = dynamic_pointer_cast<King>(cur_piece)) {
         king->set_moved();  // King has moved (can no longer castle)
-        set_king_pos(king);
+        // Update King position
+        turn == Player::WHITE ? p1_king = king->get_pos() : p2_king = king->get_pos();
     }
 
     switch_turns();  // Switch turns upon successful move
-    return true;
 }
 
 //*** TODO: Consider making a View class for this
@@ -92,7 +90,7 @@ ostream &operator<<(ostream &os, const Board &board) {
         os << row + 1 << " | ";  // LHS key
         for (int col = 0; col < board.kNumCols; ++col) {
             cur_tile.col = col;
-            const Piece *cur_piece = board.get_tile(cur_tile);
+            const shared_ptr<Piece> cur_piece = board.get_tile(cur_tile);
             if (cur_piece) {
                 os << *cur_piece;
             }
@@ -127,15 +125,6 @@ Board::Board()
     load_board("default_board.txt");
 }
 
-Board::~Board() {
-    for (auto &row : board) {
-        for (auto piece : row) {
-            delete piece;
-            piece = nullptr;
-        }
-    }
-}
-
 // Load Board from file
 void Board::load_board(const string &board_name) {
     ifstream ifs{ board_name };
@@ -159,26 +148,13 @@ void Board::load_board(const string &board_name) {
     }
 }
 
-void Board::capture_en_passant_pawn() {
-    Piece *&target_tile = get_tile(last_en_passant_pos);
-    delete target_tile;
-    target_tile = nullptr;
-}
-
-void Board::set_king_pos(King *king) {
-    if (king->get_player() == Player::WHITE)
-        p1_king = king->get_pos();
-    else
-        p2_king = king->get_pos();
-}
-
 void Board::castle_update_rook(Tile old_pos, Tile new_pos) {
     // lambda to move rook to castled position
     static auto move_rook_to_castled = [&](int rook_col,
         int castled_col) {
         const Tile rook_pos{ old_pos.row, rook_col };
         const Tile castled_pos{ old_pos.row, castled_col };
-        Rook *temp_rook = static_cast<Rook *>(get_tile(rook_pos));
+        shared_ptr<Rook> temp_rook = static_pointer_cast<Rook>(get_tile(rook_pos));
         get_tile(castled_pos) = get_tile(rook_pos);  // Move piece
         get_tile(rook_pos) = nullptr;  // old_pos is empty now
         temp_rook->set_pos(castled_pos);  // Update Rook's pos
@@ -199,8 +175,8 @@ bool Board::valid_move(Tile old_pos, Tile new_pos) const {
         return false;
     }
 
-    const Piece *cur_piece = get_tile(old_pos);
-    const Piece *new_tile = get_tile(new_pos);
+    const shared_ptr<Piece> cur_piece = get_tile(old_pos);
+    const shared_ptr<Piece> new_tile = get_tile(new_pos);
     if (!cur_piece)
         return false;  // Player selected empty tile
     // Players can only move their own pieces
