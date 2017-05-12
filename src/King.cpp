@@ -22,6 +22,16 @@ bool King::valid_physical_placement(Tile new_pos) const {
     return row_abs_diff == 1 || col_abs_diff == 1;
 }
 
+bool King::additional_placement_checks(bool okay_placement, Tile new_pos) const {
+    // If Player is making a valid castle move, notify Board
+    if (!okay_placement && valid_castle(new_pos)) {
+        Board::get_instance().castle_occurred();
+        return true;
+    }
+    // Otherwise, no change to validity of move
+    return okay_placement;
+}
+
 bool King::valid_castle(Tile new_pos) const {
     if (moved)
         return false;  // Can't castle if already moved

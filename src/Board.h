@@ -14,6 +14,7 @@ class King;
 
 #include <cassert>
 #include <iosfwd>
+#include <string>
 
 // Simple board: pieces are stored in 8x8 array of pointers to pieces.
 // Provides functions for accessing and updating board.
@@ -53,6 +54,7 @@ public:
     Player get_turn() const { return turn; }
     Tile get_last_en_passant_pos() const { return last_en_passant_pos; }
     void enpassant_occured() { en_passant = true; }
+    void castle_occurred() { castle = true; };
 
     // EFFECTS  Determine if tile is valid
     bool tile_in_bounds(Tile pos) const {
@@ -85,32 +87,27 @@ private:
     Tile p2_king;
     Tile last_en_passant_pos;  // Track tile of pawn that moved two ranks last move. 
                                // {-1, -1} if none.
-    Player turn;
-    bool en_passant;  // True if current move is an en_passant. Used to
-                              // communicate between valid_move() and make_move()
+    Player turn = Player::WHITE;  // White always goes first
+    bool en_passant = false;  // True if current move is an en_passant
+    bool castle = false;  // True if current move is a castle
     //Player checked_;  // Player whose King is under attack
                         //*** Check detection not yet implemented
 
+    // Default ctor loads default board
     explicit Board();
-    explicit Board(std::istream &is);
     // Singleton should not be destructed by user
     ~Board();
 
     // MODIFIES board
     // EFFECTS  Fills board with nullptr
-    void init_blank_board();
+    void clear() noexcept;
 
     // MODIFIES board
     // EFFECTS  Places piece on board at specified tile
     void set_tile(Tile pos, Piece *piece) { get_tile(pos) = piece; }
 
-    // MODIFIES board
-    // EFFECTS  Places pawns on board during initialization
-    void place_pawns();
-
-    // MODIFIES board
-    // EFFECTS  Places non-pawn pieces on board during initialization
-    void place_pieces();
+    // Load Board from file
+    void load_board(const std::string &board_name);
 
     // MODIFIES turn_
     // EFFECTS  Updates whose turn it is. Called by make_move()
@@ -131,9 +128,6 @@ private:
     // MODIFIES rook, board_
     // EFFECTS  Moves rook to correct castle position. Called by make_move()
     void castle_update_rook(Tile old_pos, Tile new_pos);
-
-    // EFFECTS  Check if king can castle to new_pos
-    bool valid_castle(King *king, Tile new_pos) const;
 
     // EFFECTS  Determine if piece can be moved to new tile.
     //          Make sure piece moves according to Chess rules.

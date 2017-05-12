@@ -15,7 +15,7 @@ public:
         : LinearPiece{ color_, pos_ } {}
 
     // Inherited from Piece base class
-    PieceType get_type() const override { return Q; };
+    char get_type() const override { return 'Q'; }
 
 protected:
     // Inherited from Piece base class

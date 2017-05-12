@@ -11,7 +11,7 @@ void bishop_valid_move_test();
 void queen_valid_move_test();
 void knight_valid_move_test();
 
-int main(int argc, char *argv[]) {
+int _main(int argc, char *argv[]) {
     cout << "Begin testing.\n";
     bishop_valid_move_test();
     queen_valid_move_test();

@@ -23,17 +23,15 @@ public:
     void set_moved() { moved = true; }
 
     // Inherited from Piece base class
-    PieceType get_type() const override { return K; };
+    char get_type() const override { return 'K'; }
 
 protected:
     // Inherited from Piece base class
     bool valid_physical_placement(Tile new_pos) const override;
 
     // Inherited from Piece base class
-    bool additional_placement_checks(bool okay_placement, 
-        Tile new_pos) const override {
-        return okay_placement ? okay_placement : valid_castle(new_pos);
-    }
+    bool additional_placement_checks(bool okay_placement, Tile new_pos) const 
+        override;
 
 private:
     bool moved = false;  // Can only castle if !moved

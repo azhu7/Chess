@@ -11,9 +11,7 @@
 using std::ostream;
 using std::underlying_type;
 
-ostream &operator<<(ostream &os, Piece::PieceType pt) {
-    return os << static_cast<underlying_type<Piece::PieceType>::type>(pt);
-}
+// Output operator overload
 ostream &operator<<(ostream &os, const Piece &p) {
     return os << p.get_player() << p.get_type();
 }

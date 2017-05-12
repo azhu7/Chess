@@ -27,19 +27,14 @@ public:
 
     void set_pos(Tile pos_) { pos = pos_; }
 
-    enum PieceType : char {
-        P = 'P', B = 'B', N = 'N', R = 'R', Q = 'Q', K = 'K'
-    };
-
     // EFFECTS  Return piece type
-    virtual PieceType get_type() const = 0;
+    virtual char get_type() const = 0;
 
     // Determine if piece can move to new position. Utilizes Template Method
     // and Non-virtual Interface patterns to customize behavior.
     bool valid_move(Tile new_pos) const;
 
-    // Output operator overloads
-    friend std::ostream &operator<<(std::ostream &os, Piece::PieceType pt);
+    // Output operator overload
     friend std::ostream &operator<<(std::ostream &os, const Piece &p);
 
 protected:

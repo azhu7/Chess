@@ -20,7 +20,7 @@ public:
     void set_moved() { moved = true; }
 
     // Inherited from Piece base class
-    PieceType get_type() const override { return R; };
+    char get_type() const override { return 'R'; }
 
 protected:
     // Inherited from Piece base class

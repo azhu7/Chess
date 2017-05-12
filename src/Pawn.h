@@ -19,7 +19,7 @@ public:
         : Piece{ color_, pos_ } {}
 
     // Inherited from Piece base class
-    PieceType get_type() const override { return P; }
+    char get_type() const override { return 'P'; }
 
 protected:
     // Inherited from Piece base class
