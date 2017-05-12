@@ -1,4 +1,4 @@
-# Chess (v1.7)
+# Chess (v1.8)
 Implemented Chess in C++, applying C++11 and C++14 features and Object Oriented design.  
 
 Dependencies:
