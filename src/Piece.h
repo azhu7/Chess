@@ -22,12 +22,12 @@ public:
     int get_row() const { return pos.row; }
     int get_col() const { return pos.col; }
 
-    // EFFECTS  Returns piece position as Tile. Useful for passing into functions.
+    // Returns piece position as Tile. Useful for passing into functions.
     const Tile get_pos() const { return pos; }
 
     void set_pos(Tile pos_) { pos = pos_; }
 
-    // EFFECTS  Return piece type
+    // Return piece type
     virtual char get_type() const = 0;
 
     // Determine if piece can move to new position. Utilizes Template Method

@@ -19,7 +19,7 @@ class King;
 
 // Simple board: pieces are stored in 8x8 array of pointers to pieces.
 // Provides functions for accessing and updating board.
-// MoveMaker wrapper required to reinforce rules for making certain moves.
+// Reinforces rules for making moves.
 class Board {
 public:
     // Constants for castling
@@ -38,37 +38,29 @@ public:
     Board &operator=(const Board &) = delete;
     Board &operator=(Board &&) = delete;
 
-    // REQUIRES pos is valid tile
-    // EFFECTS  Return const Piece pointer at specified tile
+    // Return const Piece pointer at specified tile. Requires pos is valid tile.
     const std::shared_ptr<Piece> get_tile(Tile pos) const {
         assert(tile_in_bounds(pos));
         return board[pos.row][pos.col];
     }
 
-    // REQUIRES pos is valid tile
-    // EFFECTS  Return reference to Piece pointer at specified tile
+    // Return reference to Piece pointer at specified tile. Requires pos is 
+    // valid tile.
     std::shared_ptr<Piece> &get_tile(Tile pos) {
         assert(tile_in_bounds(pos));
         return board[pos.row][pos.col];
     }
 
+    // Other getters and setters
     Player get_turn() const { return turn; }
     Tile get_last_en_passant_pos() const { return last_en_passant_pos; }
     void enpassant_occured() { en_passant = true; }
     void castle_occurred() { castle = true; };
 
-    // EFFECTS  Determine if tile is valid
-    bool tile_in_bounds(Tile pos) const {
-        return pos.col >= 0 && pos.col < kNumCols && pos.row >= 0 && 
-            pos.row < kNumRows;
-    }
-
-    // REQUIRES old_pos and new_pos are valid tiles
-    // MODIFIES board
-    // EFFECTS  Move piece to new tile
+    // Move piece to new tile. Requires old_pos and new_pos are valid tiles.
     void move(Tile old_pos, Tile new_pos);
 
-    // EFFECTS  Pretty print the board
+    // Pretty print the board
     friend std::ostream &operator<<(std::ostream &os, const Board &board);
 
 private:
@@ -90,35 +82,43 @@ private:
     // Singleton should not be destructed by user
     ~Board() {}
 
-    // EFFECTS  Fills board with nullptr
-    //*** TODO: Don't need this?
-    void clear() noexcept;
-
-    // EFFECTS  Places piece on board at specified tile
-    void set_tile(Tile pos, std::shared_ptr<Piece> piece) { get_tile(pos) = piece; }
-
     // Load Board from file
     void load_board(const std::string &board_name);
 
-    // EFFECTS  Updates whose turn it is. Called by make_move()
+    // Fills board with nullptr
+    //*** TODO: Don't need this?
+    void clear() noexcept;
+
+    // Determine if tile is valid
+    bool tile_in_bounds(Tile pos) const {
+        int col = pos.col, row = pos.row;
+        return col >= 0 && col < kNumCols && row >= 0 && row < kNumRows;
+    }
+
+    // Places piece on board at specified tile
+    void set_tile(Tile pos, std::shared_ptr<Piece> piece) { 
+        board[pos.row][pos.col] = piece;
+    }
+
+    // Updates whose turn it is. Called by make_move()
     void switch_turns() {
         turn = turn == Player::WHITE ? Player::BLACK : Player::WHITE;
     }
 
     //*** Ported from MoveMaker
 
-    // EFFECTS  Moves rook to correct castle position. Called by make_move()
+    // Moves rook to correct castle position. Called by make_move()
     void castle_update_rook(Tile old_pos, Tile new_pos);
 
-    // EFFECTS  Determine if piece can be moved to new tile.
-    //          Make sure piece moves according to Chess rules.
-    bool valid_move(Tile old_pos, Tile new_pos) const;
+    // Determine if piece can be moved to new tile. Make sure piece moves
+    // according to standard Chess rules.
+    void validate_move(Tile old_pos, Tile new_pos) const;
 
-    // EFFECTS  Upon a successful move, detect any checks
+    // Return true if any checks.
     //*** TODO     Accomplish by checking around King?
     bool detect_check() const;
 
-    // EFFECTS  Upon a check, detect checkmate
+    // Return true if checkmate
     bool detect_checkmate() const;
 };
 

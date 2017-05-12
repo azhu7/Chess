@@ -21,7 +21,7 @@ public:
     }
 
     // REQUIRES Straight path from current pos to new_pos
-    // EFFECTS  Determine relative direction to new_pos.
+    // Determine relative direction to new_pos.
     //          Used to aid MoveMaker detect collision functions.
     Direction get_direction(Tile new_pos) const;
 
@@ -30,19 +30,19 @@ protected:
     bool additional_placement_checks(bool valid_physical_placement,
         Tile new_pos) const override;
 
-    // EFFECTS  Return true if horizontal path from old pos to new pos
+    // Return true if horizontal path from old pos to new pos
     //          Used by Rook and Queen
     bool horizontal_path(Tile old_pos, Tile new_pos) const {
         return old_pos.row == new_pos.row;
     }
 
-    // EFFECTS  Return true is vertical path from old pos to new pos
+    // Return true is vertical path from old pos to new pos
     //          Used by Rook and Queen
     bool vertical_path(Tile old_pos, Tile new_pos) const {
         return old_pos.col == new_pos.col;
     }
 
-    // EFFECTS  Return true if diagonal path from old pos to new pos
+    // Return true if diagonal path from old pos to new pos
     //          Used by Bishop and Queen
     bool diagonal_path(Tile old_pos, Tile new_pos) const {
         // Find top_right and bottom_left corners of box created by old_pos and new_pos

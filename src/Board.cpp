@@ -39,8 +39,7 @@ Board &Board::get_instance() {
 
 //*** TODO: Replace bool return with void. Throw exception on error.
 void Board::move(Tile old_pos, Tile new_pos) {
-    if (!valid_move(old_pos, new_pos))
-        throw Error{ "Invalid move. Try again!" };
+    validate_move(old_pos, new_pos);
 
     shared_ptr<Piece> cur_piece = get_tile(old_pos);
     if (shared_ptr<Piece> &target_tile = get_tile(new_pos)) {
@@ -169,30 +168,26 @@ void Board::castle_update_rook(Tile old_pos, Tile new_pos) {
         move_rook_to_castled(kLeftRookInitCol, kLeftRookCastledCol);
 }
 
-bool Board::valid_move(Tile old_pos, Tile new_pos) const {
-    if (!(tile_in_bounds(new_pos) && tile_in_bounds(old_pos))) {
-        cerr << "Input tile is out of bounds\n";
-        return false;
-    }
+void Board::validate_move(Tile old_pos, Tile new_pos) const {
+    if (!(tile_in_bounds(new_pos) && tile_in_bounds(old_pos)))
+        throw Error{ "Input tile is out of bounds!\n" };
 
     const shared_ptr<Piece> cur_piece = get_tile(old_pos);
     const shared_ptr<Piece> new_tile = get_tile(new_pos);
+    // Player selected empty tile
     if (!cur_piece)
-        return false;  // Player selected empty tile
+        throw Error{ "No piece selected!\n" };
     // Players can only move their own pieces
-    if (cur_piece->get_player() != turn) {
-        cerr << "Can't move enemy piece\n";
-        return false;
-    }
+    if (cur_piece->get_player() != turn)
+        throw Error{ "Can't move enemy piece!\n" };
     // Can't move onto own piece
     bool capture_own_piece = new_tile ? new_tile->get_player() ==
         cur_piece->get_player() : false;
-    if (capture_own_piece) {
-        cerr << "Can't capture own piece\n";
-        return false;
-    }
+    if (capture_own_piece)
+        throw Error{ "Can't capture own piece!\n" };
 
-    return cur_piece->valid_move(new_pos);
+    if (!cur_piece->valid_move(new_pos))
+        throw Error{ "Can't move specified piece there!\n" };
     //*** TODO: Check if own King is being attacked. If so, then invalid.
     //*** Check if enemy king is being attacked. If so, update checked_.
 }

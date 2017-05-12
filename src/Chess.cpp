@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
 Print functions
 */
 
+// Print introduction and ask user if they want to see the instructions.
 void print_intro() {
     cout << "Hello! Welcome to chess.\n";
     cout << "Would you like to see the instructions? (y/n): ";
@@ -127,6 +128,7 @@ void print_intro() {
     cout << "Let's get started!\n\n";
 }
 
+// Print instructions to console.
 void print_instructions() {
     cout << " --------------------------------\n";
     cout << "| Rules are standard chess rules.|\n";
@@ -141,7 +143,7 @@ void print_instructions() {
 Parse functions
 */
 
-// REQUIRES input is of format: [a-h][1-8] [a-h][1-8]
+// Requires input is of format: [a-h][1-8] [a-h][1-8].
 void parse_move(const string &input, Tile &old_pos, Tile &new_pos) {
     // Read in rows and correct to zero-indexed
     old_pos.row = input[1] - '0' - 1;
@@ -150,9 +152,7 @@ void parse_move(const string &input, Tile &old_pos, Tile &new_pos) {
     new_pos.col = parse_col_label(input[3]);
 }
 
-// REQUIRES col_label is [a-h]
-// EFFECTS  Return respective column number
-//          Throws exception if col_label is a valid label
+// Return respective column number. Requires col_label is [a-h].
 int parse_col_label(char col_label) {
     static const unordered_map<char, int> col_labels{
         { 'a', 0 },
@@ -173,9 +173,7 @@ int parse_col_label(char col_label) {
 Logging functions
 */
 
-// REQUIRES ofs if open
-// MODIFIES ofs
-// EFFECTS  Write move to log
+// Write move to log. Requires ofs is open.
 void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player, 
     bool valid_move) {
     assert(ofs.is_open());

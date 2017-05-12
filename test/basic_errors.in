@@ -1,0 +1,26 @@
+n
+a2 b2  // W invalid pawn move R
+b2 a2  // W invalid pawn move L
+a1 a0  // W out-of-bounds
+h1 i1  // W out-of-bounds
+a2 a3  // W
+a7 b7  // B invalid pawn move R
+a8 a9  // B out-of-bounds
+h8 i8  // B out-of-bounds
+a6 a5  // B not-B-piece
+a2 a3  // B not-B-piece
+a7 a7  // B invalid move in place
+aa1a2  // Invalid input
+2 a2   // Invalid input
+a 3a3  // Invalid input
+quit
+
+End State:
+2R 2N 2B 2Q 2K 2B 2N 2R
+2P 2P 2P 2P 2P 2P 2P 2P
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- --
+1P -- -- -- -- -- -- --
+-- 1P 1P 1P 1P 1P 1P 1P
+1R 1N 1B 1Q 1K 1B 1N 1R

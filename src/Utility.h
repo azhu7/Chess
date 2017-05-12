@@ -25,8 +25,8 @@ enum class Direction {
     N, S, E, W, NE, NW, SE, SW
 };
 
-// REQUIRES Straight path from current pos to new_pos
-// EFFECTS  Check for any pieces between old_pos and new_pos
+// Check for any pieces between old_pos and new_pos. Requires straight path 
+// from current pos to new_pos
 bool collision(Tile old_pos, Tile new_pos, Direction direction);
 
 #endif  // !UTILITY_H
