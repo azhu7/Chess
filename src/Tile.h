@@ -20,7 +20,11 @@ struct Tile {
     bool operator!=(Tile rhs) const {
         return !(*this == rhs);
     }
+
+    // Convert 2D Tile to 1D array index
+    operator int() const;
     
+    // Print Tile in the format [col][row]. Example: a2
     friend std::ostream &operator<<(std::ostream &os, Tile pos);
 
     int row;

@@ -19,7 +19,8 @@ class View;
 #include <set>
 #include <string>
 
-// Simple board: pieces are stored in 8x8 array of pointers to pieces.
+// Pieces are stored in 1D 8x8 array of pointers to pieces.
+// Starts as empty board. Controller loads board file to set the initial pieces.
 // Provides functions for accessing and updating board.
 // Reinforces rules for making moves.
 class Board {
@@ -43,17 +44,20 @@ public:
     Board &operator=(const Board &) = delete;
     Board &operator=(Board &&) = delete;
 
+    // Load Board from file
+    void load_board(const std::string &board_name);
+
     // Return const Piece pointer at specified tile. Requires pos is valid tile.
     const std::shared_ptr<Piece> get_tile(Tile pos) const {
         assert(tile_in_bounds(pos));
-        return board[pos.row][pos.col];
+        return board[pos];
     }
 
     // Return reference to Piece pointer at specified tile. Requires pos is 
     // valid tile.
     std::shared_ptr<Piece> &get_tile(Tile pos) {
         assert(tile_in_bounds(pos));
-        return board[pos.row][pos.col];
+        return board[pos];
     }
 
     // Other getters and setters
@@ -80,7 +84,7 @@ public:
     void notify_remove(Tile pos);
 
 private:
-    std::shared_ptr<Piece> board[kNum_rows][kNum_cols];  // 8x8 board of pointers to pieces
+    std::shared_ptr<Piece> board[kNum_rows * kNum_cols];  // 1D 8x8 board
     std::set<std::shared_ptr<View>> views;  // Views subscribed to the Board
     Tile p1_king;  // Track each player's king to help with check detection
     Tile p2_king;
@@ -97,9 +101,6 @@ private:
     // Singleton should not be destructed by user
     ~Board() {}
 
-    // Load Board from file
-    void load_board(const std::string &board_name);
-
     // Determine if tile is valid
     bool tile_in_bounds(Tile pos) const {
         int col = pos.col, row = pos.row;
@@ -108,7 +109,7 @@ private:
 
     // Places piece on board at specified tile
     void set_tile(Tile pos, std::shared_ptr<Piece> piece) { 
-        board[pos.row][pos.col] = piece;
+        board[pos] = piece;
     }
 
     // Updates whose turn it is. Called by make_move()

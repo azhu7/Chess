@@ -12,7 +12,6 @@
 #include <vector>
 //*** #include <windows.h>
 
-using std::cout;
 using std::ostream;
 using std::string;
 using std::vector;

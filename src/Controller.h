@@ -3,19 +3,26 @@
 
 #include <memory>
 #include <fstream>
+#include <string>
 
 class View;
 
 class Controller {
 public:
-    // Ctor
+    // Ctor creates and attaches default view.
     Controller();
+
+    // Dtor closes ofs if it is open.
+    ~Controller();
+
+    // Lets user specify an initial board layout.
+    void load_board(const std::string &board_name) const;
+
+    // Lets user enable logging.
+    void enable_logging(const std::string &log_name);
 
     // Run the program by accepting user commands.
     void run();
-
-    // Lets user enable logging.
-    void enable_logging(std::ofstream &ofs_) { ofs = std::move(ofs_); }
 
 private:
     std::shared_ptr<View> view;

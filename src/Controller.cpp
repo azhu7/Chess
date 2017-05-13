@@ -37,9 +37,30 @@ int parse_col_label(char col_label);
 void log_move(ofstream &ofs, Tile old_pos, Tile new_pos, Player player,
     bool valid_move);
 
+// Ctor creates and attaches default view.
 Controller::Controller()
     : view{ std::make_shared<View>() } {
     Board::get_instance().attach(view);
+}
+
+// Dtor closes ofs if it is open.
+Controller::~Controller() {
+    if (ofs.is_open())
+        ofs.close();
+}
+
+// Lets user specify an initial board layout.
+void Controller::load_board(const string &board_name) const {
+    Board::get_instance().load_board(board_name);
+}
+
+// Lets user enable logging.
+void Controller::enable_logging(const string &log_name) {
+    ofs.open(log_name);
+    if (!ofs.is_open())
+        throw Error{ "Invalid log name!" };
+    cout << "Writing game log to " << log_name << '\n';
+    ofs << "n\n";  // Skip instructions on replay
 }
 
 void Controller::run() {

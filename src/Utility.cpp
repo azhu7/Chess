@@ -9,6 +9,8 @@
 #include "Board.h"
 #include "Tile.h"
 
+// Check for any pieces between old_pos and new_pos. Requires straight path 
+// from current pos to new_pos
 bool collision(Tile old_pos, Tile new_pos, Direction direction) {
     Tile current_tile = old_pos;
     int vert_mvmt, horiz_mvmt;

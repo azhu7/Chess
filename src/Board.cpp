@@ -14,15 +14,18 @@
 #include "Utility.h"
 #include "View.h"
 
+#include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <fstream>
 #include <functional>
+#include <iostream>
 
-using std::istream; using std::ostream; using std::cerr;
+using std::fill;
 using std::ifstream;
 using std::shared_ptr; using std::dynamic_pointer_cast; using std::static_pointer_cast;
 using std::bind; using namespace std::placeholders;
+using std::cout;
+using std::bad_alloc;
 using std::string;
 
 /*
@@ -35,12 +38,36 @@ Board &Board::get_instance() {
     return b;
 }
 
+// Load Board from file
+void Board::load_board(const string &board_name) {
+    ifstream ifs{ board_name };
+    if (!ifs.is_open())
+        throw Error{ "Could not open Board file" };
+
+    for (int i = kNum_rows - 1; i >= 0; --i) {
+        for (int j = 0; j < kNum_cols; ++j) {
+            char player;
+            char piece_type;
+            if (!(ifs >> player >> piece_type))
+                throw Error{ "Error reading in Board" };
+            Tile cur_tile{ i, j };
+            if (player == '-')
+                board[cur_tile] = nullptr;
+            else {
+                Player p = player == '1' ? WHITE : BLACK;
+                board[cur_tile] = create_piece(p, cur_tile, piece_type);
+                notify_position(board[cur_tile]->get_id(), cur_tile);
+            }
+        }
+    }
+}
+
 // Move piece to new tile. Requires old_pos and new_pos are valid tiles.
 void Board::move(Tile old_pos, Tile new_pos) {
     validate_move(old_pos, new_pos);  // Run validity checks on move
 
-    shared_ptr<Piece> cur_piece = get_tile(old_pos);
-    if (shared_ptr<Piece> &target_tile = get_tile(new_pos)) {
+    shared_ptr<Piece> cur_piece = board[old_pos];
+    if (shared_ptr<Piece> &target_tile = board[new_pos]) {
         // Capture enemy piece
         assert(target_tile->get_player() != turn);  // Make sure enemy piece
         target_tile = nullptr;
@@ -48,7 +75,7 @@ void Board::move(Tile old_pos, Tile new_pos) {
 
     // Account for en passant capture
     if (en_passant) {
-        get_tile(last_en_passant_pos) = nullptr;
+        board[last_en_passant_pos] = nullptr;
         notify_remove(last_en_passant_pos);
         en_passant = false;
     }
@@ -59,8 +86,8 @@ void Board::move(Tile old_pos, Tile new_pos) {
     }
     last_en_passant_pos = Tile{};  // Reset en passant tile
 
-    get_tile(new_pos) = get_tile(old_pos);  // Move piece
-    get_tile(old_pos) = nullptr;  // old_pos is empty now
+    board[new_pos] = board[old_pos];  // Move piece
+    board[old_pos] = nullptr;  // old_pos is empty now
     cur_piece->set_pos(new_pos);  // Update piece coordinates
     notify_move(cur_piece->get_id(), old_pos, new_pos);
     
@@ -84,13 +111,11 @@ void Board::move(Tile old_pos, Tile new_pos) {
 void Board::attach(shared_ptr<View> view_ptr) {
     views.emplace(view_ptr);
     // Update new view
-    for (int i = 0; i < kNum_rows; ++i) {
-        for (int j = 0; j < kNum_cols; ++j) {
-            if (shared_ptr<Piece> piece = board[i][j]) {
-                view_ptr->update_position(piece->get_id(), piece->get_pos());
-            }
-        }
-    }
+    for_each(board, board + kNum_rows * kNum_cols, 
+        [this, view_ptr](shared_ptr<Piece> p) {
+        if (p)
+            view_ptr->update_position(p->get_id(), p->get_pos());
+    });
 }
 
 // Detach the View by discarding the supplied pointer from the container of Views
@@ -124,32 +149,7 @@ Board private members
 // Default ctor loads default board
 //*** How to get King position for non-default board?
 Board::Board()
-    : p1_king{ King::P1_KING_START }, p2_king{ King::P2_KING_START } {
-    load_board("default_board.txt");
-}
-
-// Load Board from file
-void Board::load_board(const string &board_name) {
-    ifstream ifs{ board_name };
-    if (!ifs)
-        throw Error{ "Could not open Board file" };
-
-    for (int i = kNum_rows - 1; i >= 0; --i) {
-        for (int j = 0; j < kNum_cols; ++j) {
-            char player;
-            char piece_type;
-            if (!(ifs >> player >> piece_type))
-                //*** TODO: Test that this doesn't leak b/c singleton
-                throw Error{ "Error reading in Board" };
-            if (player == '-')
-                board[i][j] = nullptr;
-            else {
-                Player p = player == '1' ? WHITE : BLACK;
-                board[i][j] = create_piece(p, Tile{ i, j }, piece_type);
-            }
-        }
-    }
-}
+    : p1_king{ King::P1_KING_START }, p2_king{ King::P2_KING_START } {}
 
 void Board::castle_update_rook(Tile old_pos, Tile new_pos) {
     // lambda to move rook to castled position
@@ -157,9 +157,9 @@ void Board::castle_update_rook(Tile old_pos, Tile new_pos) {
         int castled_col) {
         const Tile rook_pos{ old_pos.row, rook_col };
         const Tile castled_pos{ old_pos.row, castled_col };
-        shared_ptr<Rook> temp_rook = static_pointer_cast<Rook>(get_tile(rook_pos));
-        get_tile(castled_pos) = get_tile(rook_pos);  // Move piece
-        get_tile(rook_pos) = nullptr;  // old_pos is empty now
+        shared_ptr<Rook> temp_rook = static_pointer_cast<Rook>(board[rook_pos]);
+        board[castled_pos] = board[rook_pos];  // Move piece
+        board[rook_pos] = nullptr;  // old_pos is empty now
         temp_rook->set_pos(castled_pos);  // Update Rook's pos
         temp_rook->set_moved();
         notify_move(temp_rook->get_id(), rook_pos, castled_pos);
@@ -177,8 +177,8 @@ void Board::validate_move(Tile old_pos, Tile new_pos) const {
     if (!(tile_in_bounds(new_pos) && tile_in_bounds(old_pos)))
         throw Error{ "Input tile is out of bounds!\n" };
 
-    const shared_ptr<Piece> cur_piece = get_tile(old_pos);
-    const shared_ptr<Piece> new_tile = get_tile(new_pos);
+    const shared_ptr<Piece> cur_piece = board[old_pos];
+    const shared_ptr<Piece> new_tile = board[new_pos];
     // Player selected empty tile
     if (!cur_piece)
         throw Error{ "No piece selected!\n" };

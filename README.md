@@ -5,7 +5,7 @@ Dependencies:
 >Atleast g++-4.9 for &lt;regex&gt; support
 
 Run:
->./chess &lt;log_file = optional&gt;
+>./bin/chess [-b board_file] [-L log_file]
 
 In-game usage:
 >To move a piece, enter current tile, then destination tile. Example: 'a2 c3'  
