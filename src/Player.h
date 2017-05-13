@@ -9,12 +9,9 @@
 
 #include <iosfwd>
 
-enum class Player : char {
-    WHITE = '1',
-    BLACK = '2'
+enum Player : int {
+    WHITE = 1,
+    BLACK = 2
 };
-
-// Print Player as char value
-std::ostream &operator<<(std::ostream &os, Player p);
 
 #endif  // !PLAYER_H

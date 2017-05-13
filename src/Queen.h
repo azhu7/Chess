@@ -11,8 +11,8 @@
 
 class Queen : public LinearPiece {
 public:
-    explicit Queen(Player color_, Tile pos_)
-        : LinearPiece{ color_, pos_ } {}
+    explicit Queen(const std::string &id_, Player player_, Tile pos_)
+        : LinearPiece{ id_, player_, pos_ } {}
 
     // Inherited from Piece base class
     char get_type() const override { return 'Q'; }

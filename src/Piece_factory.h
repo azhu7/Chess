@@ -9,7 +9,7 @@
 
 class Piece;
 struct Tile;
-enum class Player : char;
+enum Player : int;
 
 #include <memory>
 

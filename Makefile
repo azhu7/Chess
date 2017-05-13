@@ -1,13 +1,13 @@
 # Makefile
 #
-# Build rules of Chess project
+# Chess project build rules
 #
 # Alexander Zhu <alexzhu@umich.edu>
 # December 26, 2016
 #
 # Run "make help" for usage notes
 
-CC = g++-4.9
+CC = g++-5
 CXXFLAGS = -std=c++11 -Wall -Werror -pedantic
 TARGET = bin/chess
 SRCDIR = src

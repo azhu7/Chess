@@ -23,7 +23,7 @@ int _main(int argc, char *argv[]) {
 // Simple test for Bishop::valid_move
 void bishop_valid_move_test() {
     cout << "Starting bishop valid_placement test\n";
-    Bishop b{ Player::WHITE, Tile{ 2, 2 } };  // 1B @ (2, 2)
+    Bishop b{ "1B", WHITE, Tile{ 2, 2 } };  // 1B @ (2, 2)
     assert(!b.valid_move(Tile{ 2, 2 }));  // Diagonal path to own tile not okay
     assert(!b.valid_move(Tile{ 2, 3 }));  // Horizontal path bad
     assert(!b.valid_move(Tile{ 3, 2 }));  // Vertical path bad
@@ -38,7 +38,7 @@ void bishop_valid_move_test() {
 // Simple test for Queen::valid_move
 void queen_valid_move_test() {
     cout << "Starting queen valid_placement test\n";
-    Queen q{ Player::WHITE, Tile{ 3, 3 } };  // 1Q @ (3, 3)
+    Queen q{ "1Q", WHITE, Tile{ 3, 3 } };  // 1Q @ (3, 3)
     assert(!q.valid_move(Tile{ 3, 3 }));  // Path to own tile not okay
     assert(q.valid_move(Tile{ 3, 2 }));  // Horizontal path okay
     assert(q.valid_move(Tile{ 2, 3 }));  // Vertical path okay
@@ -53,7 +53,7 @@ void queen_valid_move_test() {
 // Simple test for Knight::valid_move
 void knight_valid_move_test() {
     cout << "Starting knight valid_placement test\n";
-    Knight n{ Player::WHITE, Tile{3, 3} };  // 1N @ (3, 3)
+    Knight n{ "1N", WHITE, Tile{3, 3} };  // 1N @ (3, 3)
     assert(!n.valid_move(Tile{ 3, 3 }));  // Path to own tile not okay
     assert(n.valid_move(Tile{ 5, 4 }));  // L-shaped okay
     assert(n.valid_move(Tile{ 2, 5 }));  // L-shaped okay

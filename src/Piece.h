@@ -10,21 +10,22 @@
 #include "Player.h"
 #include "Tile.h"
 
+#include <string>
+
 class Piece {
 public:
-    explicit Piece(Player color_, Tile pos_)
-        : player{ color_ }, pos{ pos_ } {}
+    explicit Piece(const std::string &id_, Player player_, Tile pos_)
+        : id{ id_ }, player { player_ }, pos{ pos_ } {
+    }
 
     virtual ~Piece() {}
 
-    // Getters
-    const Player &get_player() const { return player; }
+    // Getters and setters
+    const std::string &get_id() const { return id; }
+    Player get_player() const { return player; }
     int get_row() const { return pos.row; }
     int get_col() const { return pos.col; }
-
-    // Returns piece position as Tile. Useful for passing into functions.
-    const Tile get_pos() const { return pos; }
-
+    Tile get_pos() const { return pos; }
     void set_pos(Tile pos_) { pos = pos_; }
 
     // Return piece type
@@ -33,9 +34,6 @@ public:
     // Determine if piece can move to new position. Utilizes Template Method
     // and Non-virtual Interface patterns to customize behavior.
     bool valid_move(Tile new_pos) const;
-
-    // Output operator overload
-    friend std::ostream &operator<<(std::ostream &os, const Piece &p);
 
 protected:
     // Determine if this Piece is physically allowed to move to new position.
@@ -49,6 +47,7 @@ protected:
         Tile new_pos) const { return valid_physical_placement; }
 
 private:
+    std::string id;
     Player player;
     Tile pos;
 };

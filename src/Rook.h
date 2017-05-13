@@ -11,8 +11,8 @@
 
 class Rook : public LinearPiece {
 public:
-    explicit Rook(Player color_, Tile pos_)
-        : LinearPiece{ color_, pos_ } {}
+    explicit Rook(const std::string &id_, Player player_, Tile pos_)
+        : LinearPiece{ id_, player_, pos_ } {}
 
     bool has_moved() const { return moved; }
 

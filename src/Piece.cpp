@@ -6,16 +6,6 @@
 
 #include "Piece.h"
 
-#include <ostream>
-
-using std::ostream;
-using std::underlying_type;
-
-// Output operator overload
-ostream &operator<<(ostream &os, const Piece &p) {
-    return os << p.get_player() << p.get_type();
-}
-
 // Determine if piece can move to new position. Utilizes Template Method
 // and Non-virtual Interface patterns to customize behavior.
 bool Piece::valid_move(Tile new_pos) const {

@@ -16,9 +16,8 @@ enum class Direction : int;
 
 class LinearPiece : public Piece {
 public:
-    explicit LinearPiece(Player color_, Tile pos_)
-        : Piece{ color_, pos_ } {
-    }
+    explicit LinearPiece(const std::string &id_, Player player_, Tile pos_)
+        : Piece{ id_, player_, pos_ } {}
 
     // REQUIRES Straight path from current pos to new_pos
     // Determine relative direction to new_pos.

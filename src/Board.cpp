@@ -6,26 +6,24 @@
 
 #include "Board.h"
 
-#include "Piece.h"
-#include "Piece_factory.h"
-
-//*** TODO: Get rid of these later
 #include "King.h"
 #include "Pawn.h"
+#include "Piece.h"
+#include "Piece_factory.h"
 #include "Rook.h"
 #include "Utility.h"
+#include "View.h"
 
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <functional>
 
 using std::istream; using std::ostream; using std::cerr;
 using std::ifstream;
 using std::shared_ptr; using std::dynamic_pointer_cast; using std::static_pointer_cast;
+using std::bind; using namespace std::placeholders;
 using std::string;
-
-// Helpers
-static void print_col_labels(ostream &os, int num_cols);
 
 /*
 Board public members
@@ -37,9 +35,9 @@ Board &Board::get_instance() {
     return b;
 }
 
-//*** TODO: Replace bool return with void. Throw exception on error.
+// Move piece to new tile. Requires old_pos and new_pos are valid tiles.
 void Board::move(Tile old_pos, Tile new_pos) {
-    validate_move(old_pos, new_pos);
+    validate_move(old_pos, new_pos);  // Run validity checks on move
 
     shared_ptr<Piece> cur_piece = get_tile(old_pos);
     if (shared_ptr<Piece> &target_tile = get_tile(new_pos)) {
@@ -51,6 +49,7 @@ void Board::move(Tile old_pos, Tile new_pos) {
     // Account for en passant capture
     if (en_passant) {
         get_tile(last_en_passant_pos) = nullptr;
+        notify_remove(last_en_passant_pos);
         en_passant = false;
     }
     // Account for castle
@@ -63,6 +62,7 @@ void Board::move(Tile old_pos, Tile new_pos) {
     get_tile(new_pos) = get_tile(old_pos);  // Move piece
     get_tile(old_pos) = nullptr;  // old_pos is empty now
     cur_piece->set_pos(new_pos);  // Update piece coordinates
+    notify_move(cur_piece->get_id(), old_pos, new_pos);
     
     // Brief switch-on-type logic to update tracking variables
     if (dynamic_pointer_cast<Pawn>(cur_piece) && abs(new_pos.row - old_pos.row) == 2)
@@ -73,45 +73,48 @@ void Board::move(Tile old_pos, Tile new_pos) {
     else if (shared_ptr<King> king = dynamic_pointer_cast<King>(cur_piece)) {
         king->set_moved();  // King has moved (can no longer castle)
         // Update King position
-        turn == Player::WHITE ? p1_king = king->get_pos() : p2_king = king->get_pos();
+        turn == WHITE ? p1_king = king->get_pos() : p2_king = king->get_pos();
     }
 
     switch_turns();  // Switch turns upon successful move
 }
 
-//*** TODO: Consider making a View class for this
-ostream &operator<<(ostream &os, const Board &board) {
-    print_col_labels(os, board.kNumCols);  // Upper key
-
-    // Print rows from bottom up
-    for (int row = board.kNumRows - 1; row >= 0; --row) {
-        Tile cur_tile{ row, 0 };
-        os << row + 1 << " | ";  // LHS key
-        for (int col = 0; col < board.kNumCols; ++col) {
-            cur_tile.col = col;
-            const shared_ptr<Piece> cur_piece = board.get_tile(cur_tile);
-            if (cur_piece) {
-                os << *cur_piece;
+// Attaching a View adds it to the container and causes it to be updated
+// with all current objects'location (or other state information).
+void Board::attach(shared_ptr<View> view_ptr) {
+    views.emplace(view_ptr);
+    // Update new view
+    for (int i = 0; i < kNum_rows; ++i) {
+        for (int j = 0; j < kNum_cols; ++j) {
+            if (shared_ptr<Piece> piece = board[i][j]) {
+                view_ptr->update_position(piece->get_id(), piece->get_pos());
             }
-            else {
-                os << "--";
-            }
-            os << ' ';
         }
-        os << " | " << row + 1 << '\n';  // RHS key
     }
-
-    print_col_labels(os, board.kNumCols);  // Lower key
-    return os;
 }
 
-// Helper function for printing out column labels
-void print_col_labels(ostream &os, int num_cols) {
-    os << "    ";  // Front padding
-    for (int col = 0; col < num_cols; ++col) {
-        os << (char)('a' + col) << "  ";
-    }
-    os << '\n';
+// Detach the View by discarding the supplied pointer from the container of Views
+// - no updates sent to it thereafter.
+void Board::detach(shared_ptr<View> view_ptr) {
+    views.erase(view_ptr);
+}
+
+// Notify the views about an piece's location
+void Board::notify_position(const string &id, Tile pos) {
+    for_each(views.cbegin(), views.cend(),
+        bind(&View::update_position, _1, id, pos));
+}
+
+// Notify the views about an piece's new location
+void Board::notify_move(const string &id, Tile old_pos, Tile new_pos) {
+    for_each(views.cbegin(), views.cend(),
+        bind(&View::update_move, _1, id, old_pos, new_pos));
+}
+
+// Notify the views about a piece's removal. Used for en passants.
+void Board::notify_remove(Tile pos) {
+    for_each(views.cbegin(), views.cend(),
+        bind(&View::update_remove, _1, pos));
 }
 
 /*
@@ -119,6 +122,7 @@ Board private members
 */
 
 // Default ctor loads default board
+//*** How to get King position for non-default board?
 Board::Board()
     : p1_king{ King::P1_KING_START }, p2_king{ King::P2_KING_START } {
     load_board("default_board.txt");
@@ -130,8 +134,8 @@ void Board::load_board(const string &board_name) {
     if (!ifs)
         throw Error{ "Could not open Board file" };
 
-    for (int i = kNumRows - 1; i >= 0; --i) {
-        for (int j = 0; j < kNumCols; ++j) {
+    for (int i = kNum_rows - 1; i >= 0; --i) {
+        for (int j = 0; j < kNum_cols; ++j) {
             char player;
             char piece_type;
             if (!(ifs >> player >> piece_type))
@@ -140,7 +144,7 @@ void Board::load_board(const string &board_name) {
             if (player == '-')
                 board[i][j] = nullptr;
             else {
-                Player p = player == '1' ? Player::WHITE : Player::BLACK;
+                Player p = player == '1' ? WHITE : BLACK;
                 board[i][j] = create_piece(p, Tile{ i, j }, piece_type);
             }
         }
@@ -158,6 +162,7 @@ void Board::castle_update_rook(Tile old_pos, Tile new_pos) {
         get_tile(rook_pos) = nullptr;  // old_pos is empty now
         temp_rook->set_pos(castled_pos);  // Update Rook's pos
         temp_rook->set_moved();
+        notify_move(temp_rook->get_id(), rook_pos, castled_pos);
     };
 
     if (new_pos.col > old_pos.col)

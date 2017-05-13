@@ -13,8 +13,8 @@
 
 class Bishop : public LinearPiece {
 public:
-    explicit Bishop(Player color_, Tile pos_)
-        : LinearPiece{ color_, pos_ } {}
+    explicit Bishop(const std::string &id_, Player player_, Tile pos_)
+        : LinearPiece{ id_, player_, pos_ } {}
 
     // Inherited from Piece base class
     char get_type() const override { return 'B'; }

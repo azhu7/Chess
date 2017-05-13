@@ -28,7 +28,7 @@ bool Pawn::valid_physical_placement(Tile new_pos) const {
         return false;
 
     // Case 1: white pawn
-    if (get_player() == Player::WHITE) {
+    if (get_player() == WHITE) {
         // First move can go 1 or 2 tiles up
         if (get_row() == kWhitePawnStart)
             return (row_diff == 1) || (row_diff == 2);
@@ -79,6 +79,6 @@ bool Pawn::valid_capture_placement(Tile new_pos) const {
 
     // Valid if move 1 tile diagonally
     // White pawn must capture up one col. Black pawn capture down one col
-    return col_abs_diff == 1 && (get_player() == Player::WHITE ? row_diff == 1 :
-        row_diff == -1);
+    return col_abs_diff == 1 && (get_player() == WHITE ?
+        row_diff == 1 : row_diff == -1);
 }

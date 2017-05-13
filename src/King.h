@@ -14,8 +14,8 @@ public:
     static const Tile P1_KING_START;
     static const Tile P2_KING_START;
 
-    explicit King(Player color_, Tile pos_)
-        : Piece{ color_, pos_ } {}
+    explicit King(const std::string &id_, Player player_, Tile pos_)
+        : Piece{ id_, player_, pos_ } {}
 
     bool has_moved() const { return moved; }
 

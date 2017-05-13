@@ -1,8 +1,8 @@
-# Chess (v1.8)
+# Chess (v1.9)
 Implemented Chess in C++, applying C++11 and C++14 features and Object Oriented design.  
 
 Dependencies:
->g++-4.9 for &lt;regex&gt; support  
+>Atleast g++-4.9 for &lt;regex&gt; support
 
 Run:
 >./chess &lt;log_file = optional&gt;
