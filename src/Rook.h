@@ -17,7 +17,7 @@ public:
     bool has_moved() const { return moved; }
 
     // Can only set to true because can't "un-move"
-    void set_moved() { moved = true; }
+    void set_moved() override { moved = true; }
 
     // Inherited from Piece base class
     char get_type() const override { return 'R'; }

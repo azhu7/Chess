@@ -9,6 +9,18 @@
 #include "Board.h"
 #include "Tile.h"
 
+#include <iostream>
+#include <limits>
+
+using std::cin; using std::streamsize;
+using std::numeric_limits;
+
+// Skip remainder of input stream line
+void skip_line() {
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.clear();
+}
+
 // Check for any pieces between old_pos and new_pos. Requires straight path 
 // from current pos to new_pos
 bool collision(Tile old_pos, Tile new_pos, Direction direction) {

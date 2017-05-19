@@ -6,6 +6,8 @@
 
 #include "Piece.h"
 
+#include "Utility.h"
+
 // Determine if piece can move to new position. Utilizes Template Method
 // and Non-virtual Interface patterns to customize behavior.
 bool Piece::valid_move(Tile new_pos) const {

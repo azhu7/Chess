@@ -1,6 +1,6 @@
 /**
     Author: Alexander Zhu
-    Date Created: May 12, 2016
+    Date Created: May 12, 2017
     Description: Implementation for Chess Controller
 */
 
@@ -11,8 +11,8 @@
 #include "View.h"
 
 #include <cassert>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <regex>
 #include <unordered_map>
 
@@ -21,7 +21,6 @@ using std::ofstream;
 using std::make_shared;
 using std::regex;
 using std::unordered_map;
-using std::numeric_limits; using std::streamsize;
 using std::string;
 using std::exception;
 
@@ -65,9 +64,7 @@ void Controller::enable_logging(const string &log_name) {
 
 void Controller::run() {
     regex move_format{ "[a-h][1-8] [a-h][1-8]" };  // Example: a2 a3
-
     print_intro();
-
     while (true) {
         view->draw();
         Tile old_pos, new_pos;
@@ -129,9 +126,7 @@ void print_intro() {
     char option = 0;
     if (cin >> option && option == 'y')
         print_instructions();
-    // Ignore any extra input
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cin.clear();
+    skip_line();
     cout << "Let's get started!\n\n";
 }
 

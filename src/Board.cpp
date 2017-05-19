@@ -24,8 +24,8 @@ using std::fill;
 using std::ifstream;
 using std::shared_ptr; using std::dynamic_pointer_cast; using std::static_pointer_cast;
 using std::bind; using namespace std::placeholders;
-using std::cout;
-using std::bad_alloc;
+using std::cout; using std::cin;
+using std::bad_alloc; using std::exception;
 using std::string;
 
 /*
@@ -66,13 +66,6 @@ void Board::load_board(const string &board_name) {
 void Board::move(Tile old_pos, Tile new_pos) {
     validate_move(old_pos, new_pos);  // Run validity checks on move
 
-    shared_ptr<Piece> cur_piece = board[old_pos];
-    if (shared_ptr<Piece> &target_tile = board[new_pos]) {
-        // Capture enemy piece
-        assert(target_tile->get_player() != turn);  // Make sure enemy piece
-        target_tile = nullptr;
-    }
-
     // Account for en passant capture
     if (en_passant) {
         board[last_en_passant_pos] = nullptr;
@@ -86,24 +79,31 @@ void Board::move(Tile old_pos, Tile new_pos) {
     }
     last_en_passant_pos = Tile{};  // Reset en passant tile
 
+    shared_ptr<Piece> cur_piece = board[old_pos];
     board[new_pos] = board[old_pos];  // Move piece
     board[old_pos] = nullptr;  // old_pos is empty now
     cur_piece->set_pos(new_pos);  // Update piece coordinates
+    cur_piece->set_moved();  // Needed by Rook and King for castling
     notify_move(cur_piece->get_id(), old_pos, new_pos);
     
     // Brief switch-on-type logic to update tracking variables
-    if (dynamic_pointer_cast<Pawn>(cur_piece) && abs(new_pos.row - old_pos.row) == 2)
-        // Note that pawn is moving two tiles. Needed for possible en passant.
-        last_en_passant_pos = new_pos;
-    else if (shared_ptr<Rook> rook = dynamic_pointer_cast<Rook>(cur_piece))
-        rook->set_moved();  // Rook has moved (can no longer castle on this side)
-    else if (shared_ptr<King> king = dynamic_pointer_cast<King>(cur_piece)) {
-        king->set_moved();  // King has moved (can no longer castle)
+    if (dynamic_pointer_cast<Pawn>(cur_piece)) {
+        if (abs(new_pos.row - old_pos.row) == 2) {
+            // Note that pawn is moving two tiles. Needed for possible en passant.
+            last_en_passant_pos = new_pos;
+        }
+        else if (new_pos.row == 0 || new_pos.row == kNum_rows - 1) {
+            // Promotion if Pawn reached end
+            promote(new_pos);
+        }
+    }
+        
+    else if (dynamic_pointer_cast<King>(cur_piece)) {
         // Update King position
-        turn == WHITE ? p1_king = king->get_pos() : p2_king = king->get_pos();
+        turn == WHITE ? p1_king = cur_piece->get_pos() : p2_king = cur_piece->get_pos();
     }
 
-    switch_turns();  // Switch turns upon successful move
+    turn = turn == WHITE ? BLACK : WHITE;  // Switch turns upon successful move
 }
 
 // Attaching a View adds it to the container and causes it to be updated
@@ -147,10 +147,11 @@ Board private members
 */
 
 // Default ctor loads default board
-//*** How to get King position for non-default board?
+//*** How to get King position for non-default board? Just set when loading board! Don't have defaults here.
 Board::Board()
     : p1_king{ King::P1_KING_START }, p2_king{ King::P2_KING_START } {}
 
+// Moves rook to correct castle position. Called by make_move().
 void Board::castle_update_rook(Tile old_pos, Tile new_pos) {
     // lambda to move rook to castled position
     static auto move_rook_to_castled = [&](int rook_col,
@@ -173,6 +174,41 @@ void Board::castle_update_rook(Tile old_pos, Tile new_pos) {
         move_rook_to_castled(kLeftRookInitCol, kLeftRookCastledCol);
 }
 
+// Promote pawn to new piece specified by user input
+void Board::promote(Tile pos) {
+    cout << "What would you like to promote to? (N,B,R,Q): ";
+    char piece_id;
+    while (true) {
+        cin >> piece_id;
+        switch (piece_id) {
+        case 'P': {
+            cout << "Can't promote to pawn!\n";
+            break;
+        }
+        case 'K': {
+            cout << "Can't promote to king!\n";
+            break;
+        }
+        default: {
+            try {
+                // Attempt to create piece
+                shared_ptr<Piece> new_piece = create_piece(turn, pos, piece_id);
+                board[pos] = new_piece;
+                notify_position(new_piece->get_id(), pos);
+                skip_line();  // Skip remainder of input line, namely the \n.
+                return;
+            }
+            catch (Error &e) {
+                cout << e.what() << '\n';
+            }
+        }
+        }
+        cout << "Try again: ";
+    }
+}
+
+// Determine if piece can be moved to new tile. Make sure piece moves
+// according to standard Chess rules.
 void Board::validate_move(Tile old_pos, Tile new_pos) const {
     if (!(tile_in_bounds(new_pos) && tile_in_bounds(old_pos)))
         throw Error{ "Input tile is out of bounds!\n" };

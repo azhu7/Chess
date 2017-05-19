@@ -1,6 +1,6 @@
 /**
     Author: Alexander Zhu
-    Date Created: May 12, 2016
+    Date Created: May 12, 2017
     Description: Implementation for Chess View
 */
 

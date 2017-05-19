@@ -31,5 +31,5 @@ shared_ptr<Piece> create_piece(Player player, Tile pos, char type) {
     case 'Q': return make_shared<Queen>(id, player, pos);
     case 'K': return make_shared<King>(id, player, pos);
     }
-    throw Error{ "Invalid piece type " + type + '\n' };
+    throw Error{ "Invalid piece type!" };
 }

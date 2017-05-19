@@ -35,6 +35,9 @@ public:
     // and Non-virtual Interface patterns to customize behavior.
     bool valid_move(Tile new_pos) const;
 
+    // Fat interface function. Does nothing by default.
+    virtual void set_moved() {}
+
 protected:
     // Determine if this Piece is physically allowed to move to new position.
     // Does not take into account other pieces at that position or along the way.

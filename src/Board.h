@@ -107,18 +107,11 @@ private:
         return col >= 0 && col < kNum_cols && row >= 0 && row < kNum_rows;
     }
 
-    // Places piece on board at specified tile
-    void set_tile(Tile pos, std::shared_ptr<Piece> piece) { 
-        board[pos] = piece;
-    }
-
-    // Updates whose turn it is. Called by make_move()
-    void switch_turns() {
-        turn = turn == WHITE ? BLACK : WHITE;
-    }
-
-    // Moves rook to correct castle position. Called by make_move()
+    // Moves rook to correct castle position. Called by make_move().
     void castle_update_rook(Tile old_pos, Tile new_pos);
+
+    // Promote pawn to new piece specified by user input
+    void promote(Tile pos);
 
     // Determine if piece can be moved to new tile. Make sure piece moves
     // according to standard Chess rules.
